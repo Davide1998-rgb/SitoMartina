@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lascia una Recensione - Dott.ssa Violo</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Montserrat', sans-serif; background: #FBF3E4; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .box { background: white; padding: 40px; border-radius: 15px; max-width: 500px; width: 100%; box-shadow: 0 10px 30px rgba(102, 128, 115, 0.1); text-align: center; }
+        h2 { color: #668073; margin-bottom: 10px; }
+        p { color: #666; margin-bottom: 30px; }
+        
+        input[type="text"], textarea { width: 100%; padding: 15px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-family: inherit; font-size: 0.95rem; }
+        input:focus, textarea:focus { outline: none; border-color: #668073; }
+        
+        button { background: #668073; color: white; border: none; padding: 15px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 20px; font-size: 1rem; transition: background 0.3s; }
+        button:hover { background: #556b60; }
+
+        /* --- STILE STELLINE ANIMATE --- */
+        .star-widget {
+            display: flex;
+            flex-direction: row-reverse; /* Trucco: inverte l'ordine per far funzionare l'hover a cascata */
+            justify-content: center;
+            gap: 10px;
+            margin: 10px 0 20px 0;
+        }
+
+        .star-widget input {
+            display: none; /* Nascondiamo i pallini dei radio button */
+        }
+
+        .star-widget label {
+            font-size: 40px;
+            color: #ddd; /* Colore spento di base */
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        /* Effetto: Quando passi sopra una stella, colora lei e quelle dopo (che visivamente sono prima) */
+        .star-widget input:not(:checked) ~ label:hover,
+        .star-widget input:not(:checked) ~ label:hover ~ label {
+            color: #FFD700;
+            transform: scale(1.2); /* Animazione ingrandimento */
+        }
+
+        /* Effetto: Quando clicchi, restano colorate */
+        .star-widget input:checked ~ label {
+            color: #FFD700;
+        }
+
+        /* Effetto: Se ne ho selezionata una ma passo sopra alle altre, cambia colore */
+        .star-widget input#rate-5:checked ~ label { color: #FFD700; text-shadow: 0 0 10px #FFD700; }
+        .star-widget input#rate-4:checked ~ label { color: #FFD700; }
+        /* ecc... gestito dal ~ label generico sopra */
+
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h2>La tua opinione conta!</h2>
+        <p>Grazie per esserti affidata a me.<br>Racconta la tua esperienza.</p>
+        
+        <form action="salva_recensione_pubblica.php" method="POST">
+            
+            <input type="text" name="nome" required placeholder="Il tuo Nome (es. Laura R.)">
+            
+            <label style="display:block; margin-top:20px; font-weight:bold; color:#1A2621;">Dai un voto alla tua esperienza:</label>
+            
+            <div class="star-widget">
+                <input type="radio" name="voto" id="rate-5" value="5" required>
+                <label for="rate-5" title="Eccellente"><i class='bx bxs-star'></i></label>
+                
+                <input type="radio" name="voto" id="rate-4" value="4">
+                <label for="rate-4" title="Molto buono"><i class='bx bxs-star'></i></label>
+                
+                <input type="radio" name="voto" id="rate-3" value="3">
+                <label for="rate-3" title="Buono"><i class='bx bxs-star'></i></label>
+                
+                <input type="radio" name="voto" id="rate-2" value="2">
+                <label for="rate-2" title="Sufficiente"><i class='bx bxs-star'></i></label>
+                
+                <input type="radio" name="voto" id="rate-1" value="1">
+                <label for="rate-1" title="Scarso"><i class='bx bxs-star'></i></label>
+            </div>
+            
+            <textarea name="testo" rows="5" required placeholder="Scrivi qui la tua recensione..."></textarea>
+            
+            <button type="submit">Invia Recensione</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi Sono - Dott.ssa Martina Violo</title>
+    <meta name="description" content="Scopri il percorso, la formazione e il metodo della Dott.ssa Martina Violo, Biologa Nutrizionista a Sant'Elia Fiumerapido.">
+    <link rel="icon" type="image/png" href="img/favicon.png">
+    <link rel="stylesheet" href="style.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <style>
+        /* ============================================================
+           STILE SPECIFICO PAGINA CHI SONO
+           Riusa le variabili visive del sito: verde #668073, crema #FBF3E4,
+           Playfair Display per i titoli, Montserrat per il corpo testo.
+           ============================================================ */
+
+        /* --- 1. HERO CHI SONO (foto + intro) --- */
+        .about-hero {
+            padding: 4rem 0 5rem;
+        }
+        .about-hero-grid {
+            display: grid;
+            grid-template-columns: 0.85fr 1.15fr;
+            gap: 3.5rem;
+            align-items: center;
+        }
+        .about-hero-photo {
+            position: relative;
+        }
+        .about-hero-photo img {
+            width: 100%;
+            border-radius: 1.5rem;
+            box-shadow: 0 1.5rem 3rem rgba(0,0,0,0.1);
+            aspect-ratio: 4/5;
+            object-fit: cover;
+        }
+        .about-hero-photo::before {
+            content: '';
+            position: absolute;
+            top: -1rem; left: -1rem;
+            width: 100%; height: 100%;
+            border: 2px solid #668073;
+            border-radius: 1.5rem;
+            z-index: -1;
+        }
+        .about-hero-text .header-badge { margin-bottom: 1.2rem; }
+        .about-hero-text h1 {
+            font-size: 2.6rem;
+            text-align: left;
+            margin-bottom: 1.2rem;
+            line-height: 1.2;
+        }
+        .about-hero-text p {
+            color: #555;
+            margin-bottom: 1.2rem;
+        }
+        .about-hero-text p:last-of-type { margin-bottom: 1.8rem; }
+        .about-signature {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 1.3rem;
+            color: #668073;
+        }
+
+        /* --- 2. STRISCIA CREDENZIALI --- */
+        .credentials-strip {
+            background: #FFFFFF;
+            border-radius: 1.25rem;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            box-shadow: 0 0.625rem 1.56rem rgba(0,0,0,0.05);
+            margin-top: 3rem;
+        }
+        .credential-item {
+            text-align: center;
+            padding: 0 1rem;
+            border-right: 1px solid #eee;
+        }
+        .credential-item:last-child { border-right: none; }
+        .credential-item i {
+            font-size: 1.8rem;
+            color: #668073;
+            margin-bottom: 0.6rem;
+            display: block;
+        }
+        .credential-item strong {
+            display: block;
+            color: #1A2621;
+            font-size: 0.95rem;
+            margin-bottom: 0.2rem;
+        }
+        .credential-item span {
+            font-size: 0.8rem;
+            color: #888;
+        }
+
+        /* --- 3. IL METODO (filosofia in 3 pilastri) --- */
+        .method-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+        .method-card {
+            background: #FFFFFF;
+            padding: 2.5rem 2rem;
+            border-radius: 1.25rem;
+            text-align: center;
+            box-shadow: 0 0.625rem 1.56rem rgba(0,0,0,0.05);
+            transition: transform 0.3s ease;
+        }
+        .method-card:hover { transform: translateY(-0.4rem); }
+        .method-icon {
+            width: 4.5rem; height: 4.5rem;
+            background: #E8F5E9;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 1.3rem;
+        }
+        .method-icon i { font-size: 2rem; color: #668073; }
+        .method-card h3 { font-size: 1.2rem; margin-bottom: 0.8rem; }
+        .method-card p { color: #666; font-size: 0.92rem; }
+
+        /* --- 4. PERCORSO DI FORMAZIONE (timeline) --- */
+        .timeline {
+            max-width: 700px;
+            margin: 0 auto;
+            position: relative;
+            padding-left: 2.5rem;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0.5rem; top: 0.3rem; bottom: 0.3rem;
+            width: 3px;
+            background: #668073;
+            opacity: 0.35;
+            border-radius: 2px;
+        }
+        .timeline-item {
+            position: relative;
+            padding-bottom: 2.2rem;
+        }
+        .timeline-item:last-child { padding-bottom: 0; }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -2.5rem; top: 0.25rem;
+            width: 0.85rem; height: 0.85rem;
+            background: #668073;
+            border-radius: 50%;
+            box-shadow: 0 0 0 4px #FBF3E4;
+        }
+        .timeline-year {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            color: #668073;
+            font-size: 0.95rem;
+            margin-bottom: 0.2rem;
+        }
+        .timeline-item h4 {
+            font-size: 1.1rem;
+            color: #1A2621;
+            margin-bottom: 0.3rem;
+        }
+        .timeline-item p {
+            color: #666;
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        /* --- 5. CTA FINALE --- */
+        .about-cta {
+            background: #668073;
+            border-radius: 1.5rem;
+            padding: 3.5rem 2rem;
+            text-align: center;
+            color: white;
+        }
+        .about-cta h2 {
+            color: white;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        .about-cta h2::after { background: #FFFFFF; opacity: 0.5; }
+        .about-cta p {
+            color: rgba(255,255,255,0.85);
+            max-width: 480px;
+            margin: 0 auto 2rem;
+        }
+        .about-cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .about-cta a.btn-outline {
+            background: transparent;
+            border: 2px solid #ffffff;
+            color: #ffffff;
+        }
+        .about-cta a.btn-outline:hover {
+            background: #ffffff;
+            color: #668073;
+            border-color: #ffffff;
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 900px) {
+            .about-hero-grid { grid-template-columns: 1fr; gap: 2rem; }
+            .about-hero-photo { max-width: 360px; margin: 0 auto; }
+            .about-hero-text h1 { text-align: center; font-size: 2.1rem; }
+            .about-hero-text { text-align: center; }
+            .credentials-strip { grid-template-columns: 1fr; }
+            .credential-item { border-right: none; border-bottom: 1px solid #eee; padding-bottom: 1.2rem; }
+            .credential-item:last-child { border-bottom: none; padding-bottom: 0; }
+            .method-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <a href="index.html" class="logo-link">
+                <img src="img/logo.png" alt="Logo" class="logo-img">
+                <div class="brand-text">
+                    <span class="dott-title">Dott.ssa</span>
+                    <span class="brand-name">Martina Violo</span>
+                </div>
+            </a>
+
+            <div class="menu-toggle" id="mobile-menu">
+                <i class='bx bx-menu'></i>
+            </div>
+
+            <nav class="nav-menu">
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="servizi.html">Servizi</a></li>
+                    <li><a href="chi-sono.html" class="active">Chi Sono</a></li>
+                    <li><a href="index.html#recensioni">Dicono di me</a></li>
+                    <li><a href="index.html#contatti">Dove Siamo</a></li>
+                    <li><a href="index.html#prenota" class="btn-prenota">Prenota Ora</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- ============================================================
+         1. HERO: foto + presentazione diretta
+         ============================================================ -->
+    <section class="section-content about-hero">
+        <div class="container">
+            <div class="about-hero-grid">
+                <div class="about-hero-photo" data-aos="zoom-in">
+                    <img src="img/martina.jpeg" alt="Dott.ssa Martina Violo, Biologa Nutrizionista">
+                </div>
+                <div class="about-hero-text" data-aos="fade-up">
+                    <span class="header-badge">La persona dietro lo studio</span>
+                    <h1>Non sono qui per darti una dieta. Sono qui per ascoltarti.</h1>
+                    <p>
+                        Mi chiamo Martina, sono una Biologa Nutrizionista e da anni accompagno
+                        le persone a ritrovare un rapporto sereno con il cibo. Non credo nelle
+                        diete drastiche né nelle rinunce che non si possono mantenere: credo
+                        nella scienza applicata alla vita reale, quella fatta di pranzi di
+                        lavoro, cene fuori e giornate che non vanno mai come previsto.
+                    </p>
+                    <p>
+                        Il mio metodo nasce dall'ascolto. Prima di parlare di calorie, voglio
+                        capire le tue abitudini, i tuoi ritmi, le tue difficoltà. Solo così un
+                        percorso nutrizionale smette di essere un peso e diventa uno strumento
+                        che funziona davvero, nel tempo.
+                    </p>
+                    <span class="about-signature">— Martina</span>
+                </div>
+            </div>
+
+            <div class="credentials-strip" data-aos="fade-up" data-aos-delay="100">
+                <div class="credential-item">
+                    <i class='bx bx-graduation'></i>
+                    <strong>Laurea in Biologia</strong>
+                    <span>Indirizzo Nutrizione Umana</span>
+                </div>
+                <div class="credential-item">
+                    <i class='bx bx-shield-quarter'></i>
+                    <strong>Ordine dei Biologi</strong>
+                    <span>Lazio e Abruzzo - Sez. A</span>
+                </div>
+                <div class="credential-item">
+                    <i class='bx bx-time-five'></i>
+                    <strong>Anni di Esperienza</strong>
+                    <span>Percorsi personalizzati</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         2. IL METODO: tre pilastri della filosofia di lavoro
+         ============================================================ -->
+    <section class="section-content" style="background-color: #f9f9f9;">
+        <div class="container">
+            <h2 data-aos="fade-up">Il Mio Metodo</h2>
+            <p style="text-align:center; max-width:600px; margin:0 auto 3rem auto; color:#666;" data-aos="fade-up" data-aos-delay="100">
+                Tre principi che guidano ogni percorso, dalla prima visita al mantenimento.
+            </p>
+
+            <div class="method-grid">
+                <div class="method-card" data-aos="fade-up">
+                    <div class="method-icon"><i class='bx bx-search-alt'></i></div>
+                    <h3>Ascolto, prima di tutto</h3>
+                    <p>Ogni percorso parte da un'anamnesi approfondita: stile di vita, abitudini, obiettivi reali. Nessun piano standard.</p>
+                </div>
+                <div class="method-card" data-aos="fade-up" data-aos-delay="150">
+                    <div class="method-icon"><i class='bx bx-leaf'></i></div>
+                    <h3>Sostenibilità, non rinuncia</h3>
+                    <p>Un piano che non puoi seguire non funziona. Costruiamo insieme abitudini che reggono nel tempo, non per due settimane.</p>
+                </div>
+                <div class="method-card" data-aos="fade-up" data-aos-delay="300">
+                    <div class="method-icon"><i class='bx bx-line-chart'></i></div>
+                    <h3>Monitoraggio costante</h3>
+                    <p>I controlli periodici servono ad aggiustare la rotta, non a giudicare i risultati. Il percorso si adatta a te, non il contrario.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         3. PERCORSO DI FORMAZIONE: timeline verticale
+         ============================================================ -->
+    <section class="section-content">
+        <div class="container">
+            <h2 data-aos="fade-up">Percorso e Formazione</h2>
+
+            <div class="timeline" data-aos="fade-up" data-aos-delay="100">
+                <div class="timeline-item">
+                    <div class="timeline-year">Formazione</div>
+                    <h4>Laurea in Scienze Biologiche</h4>
+                    <p>Specializzazione in Nutrizione Umana, con focus su fisiologia dell'alimentazione e composizione corporea.</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">Abilitazione</div>
+                    <h4>Iscrizione all'Ordine dei Biologi</h4>
+                    <p>Ordine dei Biologi del Lazio e Abruzzo, Sezione A — abilitazione alla professione di Biologo Nutrizionista.</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">Formazione Continua</div>
+                    <h4>Aggiornamento professionale costante</h4>
+                    <p>Corsi e approfondimenti su nutrizione clinica, composizione corporea e approccio comportamentale all'alimentazione.</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">Oggi</div>
+                    <h4>Studio a Sant'Elia Fiumerapido</h4>
+                    <p>Accolgo pazienti in un ambiente accogliente, con percorsi su misura per ogni fase della vita.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         4. CTA FINALE: invito alla prenotazione
+         ============================================================ -->
+    <section class="section-content">
+        <div class="container">
+            <div class="about-cta" data-aos="zoom-in">
+                <h2>Iniziamo a conoscerci</h2>
+                <p>Il primo passo è una chiacchierata. Scopriamo insieme da dove partire per il tuo percorso.</p>
+                <div class="about-cta-buttons">
+                    <a href="index.html#prenota" class="btn">Prenota la Prima Visita</a>
+                    <a href="https://wa.me/393472796818?text=Salve%20Dott.ssa%20Violo,%20vorrei%20saperne%20di%20pi%C3%B9%20sul%20suo%20metodo." target="_blank" class="btn-outline">Scrivimi su WhatsApp</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; <span id="current-year"></span> Dott.ssa Martina Violo - Biologa Nutrizionista</p>
+                <p class="p-iva">P.IVA: 00000000000</p>
+
+                <p class="albo-text">
+                    Iscritta all'Ordine dei Biologi del Lazio e Abruzzo (Sez. A) <br>
+                    n. AA_000000
+                </p>
+
+                <div class="social-icons">
+                    <a href="https://www.instagram.com/iltuoprofilo" target="_blank" title="Instagram">
+                        <i class='bx bxl-instagram'></i>
+                    </a>
+                    <a href="https://www.facebook.com/iltuoprofilo" target="_blank" title="Facebook">
+                        <i class='bx bxl-facebook'></i>
+                    </a>
+                    <a href="https://www.linkedin.com/in/iltuoprofilo" target="_blank" title="LinkedIn">
+                        <i class='bx bxl-linkedin'></i>
+                    </a>
+                </div>
+
+                <ul class="footer-links">
+                    <li><a href="privacy.html">Privacy Policy</a> &bull; <a href="privacy.html#cookie-policy">Cookie Policy</a></li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+
+    <a href="https://wa.me/393472796818?text=Salve%20Dott.ssa%20Violo,%20vorrei%20informazioni." class="whatsapp-float" target="_blank">
+        <i class='bx bxl-whatsapp'></i>
+        <span class="whatsapp-msg">Scrivimi su WhatsApp</span>
+    </a>
+
+    <div class="mobile-sticky-bar">
+        <a href="https://wa.me/393472796818" class="btn-sticky-whatsapp"><i class='bx bxl-whatsapp'></i> WhatsApp</a>
+        <a href="index.html#prenota" class="btn-sticky-book">📅 Prenota Ora</a>
+    </div>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+      AOS.init({ duration: 1000, once: true, offset: 50 });
+    </script>
+    <script>
+        const yearSpan = document.getElementById('current-year');
+        if (yearSpan) yearSpan.textContent = new Date().getFullYear();
+
+        const menuToggle = document.getElementById('mobile-menu');
+        const navMenu = document.querySelector('.nav-menu');
+        if (menuToggle) {
+            menuToggle.addEventListener('click', () => {
+                navMenu.classList.toggle('active');
+                const icon = menuToggle.querySelector('i');
+                if (navMenu.classList.contains('active')) {
+                    icon.classList.remove('bx-menu'); icon.classList.add('bx-x');
+                } else {
+                    icon.classList.remove('bx-x'); icon.classList.add('bx-menu');
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>

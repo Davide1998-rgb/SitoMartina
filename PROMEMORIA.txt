@@ -1,0 +1,6 @@
+Deve essere aggiunta l'automazione che ricorda l'appuntamento ai clienti;
+Deve essere aggiunta l'automazione che invia in automatico la mail per la recensione?
+
+Aggiorna colori invio dieta mail
+
+Invio recensioni manuale non ho la lista dei pazienti

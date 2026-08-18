@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<title>Dott.ssa Martina Violo - Biologa Nutrizionista a Sant'Elia Fiumerapido</title>
+<meta name="description" content="Affidati alla Dott.ssa Martina Violo, nutrizionista a Sant'Elia Fiumerapido. Percorsi nutrizionali personalizzati, senza privazioni. Prenota ora la tua visita.">
+<meta property="og:title" content="Dott.ssa Martina Violo - Biologa Nutrizionista">
+<meta property="og:description" content="Inizia il tuo percorso verso un'alimentazione consapevole.">
+<meta property="og:image" content="https://www.tuosito.it/img/anteprima-social.jpg">
+<meta property="og:url" content="https://www.tuosito.it">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="img/favicon.png">
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Pinyon+Script&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=block" rel="stylesheet">
+<link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Physician",
+  "name": "Dott.ssa Martina Violo",
+  "image": "https://www.tuosito.it/img/martina.jpeg",
+  "@id": "https://www.tuosito.it",
+  "url": "https://www.tuosito.it",
+  "telephone": "3331909773",
+  "medicalSpecialty": "DietNutrition",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Piazza Enrico Risi, 23",
+    "addressLocality": "Sant'Elia Fiumerapido",
+    "postalCode": "03049",
+    "addressCountry": "IT"
+  },
+  "priceRange": "€€"
+}
+</script>
+
+<style>
+/* ============================================================
+   NUOVE SEZIONI — stili aggiuntivi al style.css esistente
+   ============================================================ */
+
+/* --- HERO riprogettato (gerarchia 3 livelli come riferimento) --- */
+#hero { min-height: 100vh; display: flex; align-items: center; padding-top: 5rem; }
+.hero-container { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+.hero-eyebrow { font-size: 0.9rem; font-weight: 600; color: #668073; text-transform: uppercase; letter-spacing: 3px; display: block; margin-bottom: 0.8rem; }
+.hero-role { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.5rem; color: #668073; display: block; margin-bottom: 0.3rem; }
+.hero-name { font-family: 'Playfair Display', serif; font-size: clamp(3rem, 6vw, 5rem); font-weight: 700; color: #1A2621; line-height: 1; display: block; margin-bottom: 1.5rem; }
+.hero-text p { font-size: 1.05rem; color: #555; max-width: 480px; line-height: 1.7; margin-bottom: 2rem; }
+.hero-badge-strip { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 2.5rem; background: #fff; padding: 0.8rem 1.2rem; border-radius: 3rem; box-shadow: 0 4px 15px rgba(0,0,0,0.06); display: inline-flex; }
+.hero-badge-strip .stars { color: #f1c40f; font-size: 1rem; letter-spacing: 1px; }
+.hero-badge-strip span { font-size: 0.82rem; color: #555; }
+.hero-badge-strip strong { color: #1A2621; }
+.hero-image-wrapper { position: relative; }
+.hero-img { width: 100%; border-radius: 2rem; object-fit: cover; aspect-ratio: 4/5; box-shadow: 0 2rem 4rem rgba(0,0,0,0.12); position: relative; z-index: 1; }
+.blob-bg { position: absolute; width: 85%; height: 85%; background: #E8F5E9; border-radius: 40% 60% 55% 45% / 45% 55% 40% 60%; top: 8%; left: 8%; z-index: 0; }
+@media (max-width: 768px) {
+    #hero { padding-top: 7rem; min-height: auto; }
+    .hero-container { grid-template-columns: 1fr; gap: 2rem; }
+    .hero-image-wrapper { max-width: 280px; margin: 0 auto; }
+    .hero-name { font-size: 2.8rem; }
+    .hero-text { text-align: center; }
+    .hero-buttons { justify-content: center; }
+    .hero-badge-strip { margin: 0 auto 2rem; }
+}
+
+/* --- CHI SONO: foto + testo affiancati --- */
+.chi-sono-grid { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 4rem; align-items: center; }
+.chi-sono-img { width: 100%; border-radius: 1.5rem; object-fit: cover; aspect-ratio: 3/4; box-shadow: 0 1.5rem 3rem rgba(0,0,0,0.1); }
+.chi-sono-text .header-badge { margin-bottom: 1rem; }
+.chi-sono-text h2 { text-align: left; margin-bottom: 1.2rem; }
+.chi-sono-text h2::after { margin-left: 0; }
+.chi-sono-text p { color: #555; margin-bottom: 1rem; line-height: 1.8; }
+@media (max-width: 900px) {
+    .chi-sono-grid { grid-template-columns: 1fr; gap: 2rem; }
+    .chi-sono-img { max-width: 320px; margin: 0 auto; display: block; }
+    .chi-sono-text h2 { text-align: center; }
+    .chi-sono-text h2::after { margin: 0.5rem auto 0; }
+}
+
+/* --- APPROCCIO: lista puntata dettagliata --- */
+.approccio-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
+.approccio-intro p { color: #555; line-height: 1.8; margin-bottom: 1.5rem; }
+.approccio-list { list-style: none; padding: 0; margin: 0; }
+.approccio-list li { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.7rem 0; border-bottom: 1px solid #f0f0f0; font-size: 0.95rem; color: #444; }
+.approccio-list li:last-child { border-bottom: none; }
+.approccio-list li i { color: #668073; font-size: 1.1rem; flex-shrink: 0; margin-top: 0.1rem; }
+.approccio-photo { border-radius: 1.5rem; overflow: hidden; box-shadow: 0 1rem 2.5rem rgba(0,0,0,0.08); }
+.approccio-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+@media (max-width: 900px) {
+    .approccio-grid { grid-template-columns: 1fr; }
+    .approccio-photo { display: none; }
+}
+
+/* --- SPECIALIZZAZIONI: griglia 3+3 con icona --- */
+.specializzazioni-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+.spec-card { background: #fff; padding: 2rem 1.5rem; border-radius: 1.25rem; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: transform 0.3s, box-shadow 0.3s; border-bottom: 3px solid transparent; }
+.spec-card:hover { transform: translateY(-0.4rem); box-shadow: 0 1rem 2.5rem rgba(102,128,115,0.15); border-bottom-color: #668073; }
+.spec-icon { width: 3.5rem; height: 3.5rem; background: #E8F5E9; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; }
+.spec-icon i { font-size: 1.6rem; color: #668073; }
+.spec-card h3 { font-size: 1rem; color: #1A2621; margin-bottom: 0.5rem; }
+.spec-card p { font-size: 0.88rem; color: #666; line-height: 1.6; }
+@media (max-width: 900px) { .specializzazioni-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 580px) { .specializzazioni-grid { grid-template-columns: 1fr; } }
+
+/* --- SERVIZI: card dettagliate con lista inclusa --- */
+.servizi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; }
+.servizio-card { background: #fff; border-radius: 1.5rem; padding: 2.5rem 2rem; box-shadow: 0 6px 20px rgba(0,0,0,0.06); display: flex; flex-direction: column; border-top: 4px solid #668073; transition: transform 0.3s; }
+.servizio-card.featured { background: #668073; color: white; }
+.servizio-card:hover { transform: translateY(-0.3rem); }
+.servizio-card h3 { font-size: 1.3rem; margin-bottom: 0.3rem; color: #1A2621; }
+.servizio-card.featured h3 { color: white; }
+.servizio-card .servizio-sub { font-size: 0.85rem; color: #668073; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1.2rem; }
+.servizio-card.featured .servizio-sub { color: rgba(255,255,255,0.75); }
+.servizio-card .servizio-price { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; color: #668073; margin-bottom: 1.5rem; }
+.servizio-card.featured .servizio-price { color: white; }
+.servizio-include { list-style: none; padding: 0; margin: 0 0 2rem; flex-grow: 1; }
+.servizio-include li { display: flex; align-items: flex-start; gap: 0.6rem; padding: 0.5rem 0; font-size: 0.9rem; color: #555; border-bottom: 1px solid #f5f5f5; }
+.servizio-card.featured .servizio-include li { color: rgba(255,255,255,0.9); border-bottom-color: rgba(255,255,255,0.15); }
+.servizio-include li i { color: #668073; font-size: 1rem; flex-shrink: 0; margin-top: 0.15rem; }
+.servizio-card.featured .servizio-include li i { color: rgba(255,255,255,0.85); }
+.servizio-card .btn, .servizio-card .btn-outline-white { margin-top: auto; text-align: center; display: block; }
+.btn-outline-white { border: 2px solid white; color: white; padding: 0.85rem 1.5rem; border-radius: 3rem; font-weight: 600; text-decoration: none; transition: all 0.3s; font-size: 0.95rem; }
+.btn-outline-white:hover { background: white; color: #668073; }
+@media (max-width: 768px) { .servizi-grid { grid-template-columns: 1fr; } }
+
+/* --- RECENSIONI: citazione + fonte --- */
+.review-card { background: #fff; border-radius: 1.25rem; padding: 2rem; box-shadow: 0 4px 15px rgba(0,0,0,0.05); flex-shrink: 0; width: 340px; display: flex; flex-direction: column; border-left: 4px solid #668073; }
+.review-quote { font-size: 2.5rem; color: #668073; line-height: 1; margin-bottom: 0.5rem; font-family: Georgia, serif; }
+.review-text { font-size: 0.92rem; color: #555; line-height: 1.7; flex-grow: 1; font-style: italic; margin-bottom: 1.2rem; }
+.review-author { display: flex; align-items: center; gap: 0.8rem; }
+.author-avatar { width: 2.5rem; height: 2.5rem; border-radius: 50%; background: #668073; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1rem; flex-shrink: 0; }
+.author-info h4 { font-size: 0.9rem; color: #1A2621; margin: 0 0 0.15rem; }
+.author-info .stars { color: #f1c40f; font-size: 0.85rem; }
+.author-info .review-source { font-size: 0.75rem; color: #999; margin-top: 0.1rem; }
+</style>
+</head>
+
+<body class="is-loading">
+
+<div id="preloader">
+    <div class="preloader-content">
+        <h1 class="preload-name">Martina Violo</h1>
+        <p class="preload-sub">Nutrizione Consapevole</p>
+    </div>
+    <div class="preload-counter">0%</div>
+</div>
+
+<header>
+    <div class="container">
+        <a href="index.html" class="logo-link">
+            <img src="img/logo.png" alt="Logo" class="logo-img">
+            <div class="brand-text">
+                <span class="dott-title">Dott.ssa</span>
+                <span class="brand-name">Martina Violo</span>
+            </div>
+        </a>
+        <div class="menu-toggle" id="mobile-menu"><i class='bx bx-menu'></i></div>
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="chi-sono.html">Chi Sono</a></li>
+                <li><a href="#specializzazioni">Specializzazioni</a></li>
+                <li><a href="#recensioni">Recensioni</a></li>
+                <li><a href="#contatti">Dove Siamo</a></li>
+                <li><a href="#prenota" class="btn-prenota">Prenota Ora</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<!-- ============================================================
+     1. HERO — gerarchia tipografica a 3 livelli
+     ============================================================ -->
+<section id="hero">
+    <div class="container hero-container">
+        <div class="hero-text" data-aos="fade-up">
+            <span class="hero-eyebrow">Biologa – Nutrizionista</span>
+            <span class="hero-role">Dott.ssa</span>
+            <span class="hero-name">Martina Violo</span>
+
+            <div class="hero-badge-strip">
+                <span class="stars">★★★★★</span>
+                <span><strong>Recensioni verificate</strong> dai pazienti</span>
+            </div>
+
+            <p>Percorsi nutrizionali personalizzati per ritrovare equilibrio, salute e benessere. Niente diete drastiche: solo scienza, ascolto e risultati duraturi.</p>
+
+            <div class="hero-buttons">
+                <a href="#prenota" class="btn btn-hero">Prenota la Prima Visita</a>
+                <a href="chi-sono.html" class="btn-outline">Scopri il metodo</a>
+            </div>
+        </div>
+
+        <div class="hero-image-wrapper" data-aos="zoom-in" data-aos-delay="200">
+            <div class="blob-bg"></div>
+            <img src="img/martina.jpeg" alt="Dott.ssa Martina Violo, Biologa Nutrizionista" class="hero-img">
+        </div>
+    </div>
+</section>
+
+<div class="marquee-container">
+    <div class="marquee-content">
+        <span>NUTRIZIONE CONSAPEVOLE • NO DIETE DRASTICHE • EQUILIBRIO • AMORE PER IL CIBO • SCIENZA ED EMPATIA • </span>
+        <span>NUTRIZIONE CONSAPEVOLE • NO DIETE DRASTICHE • EQUILIBRIO • AMORE PER IL CIBO • SCIENZA ED EMPATIA • </span>
+    </div>
+</div>
+
+<!-- ============================================================
+     2. CHI SONO — foto + testo affiancati (come sito riferimento)
+     ============================================================ -->
+<section id="chi-sono" class="section-content">
+    <div class="container">
+        <div class="chi-sono-grid" data-aos="fade-up">
+            <div>
+                <img src="img/martina.jpeg" alt="Dott.ssa Martina Violo" class="chi-sono-img">
+            </div>
+            <div class="chi-sono-text">
+                <span class="header-badge">Chi sono</span>
+                <h2>Benvenuta nel mio studio di nutrizione, il tuo spazio di equilibrio e benessere.</h2>
+                <p>
+                    Sono una <strong>biologa nutrizionista</strong>, appassionata di scienza, benessere e cura della persona.
+                    Credo profondamente che l'alimentazione non sia solo nutrimento, ma uno strumento potente
+                    per migliorare la qualità della vita e ritrovare equilibrio e salute.
+                </p>
+                <p>
+                    Il mio approccio è scientifico ma profondamente umano: prima di parlare di calorie,
+                    voglio capire te — le tue abitudini, i tuoi ritmi, le tue difficoltà.
+                    Solo così un piano nutrizionale smette di essere un peso e diventa uno strumento
+                    che funziona davvero, nel tempo.
+                </p>
+                <a href="chi-sono.html" class="btn" style="display:inline-block; margin-top:1rem;">Scopri di più →</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================
+     3. IL MIO APPROCCIO — lista dettagliata + foto
+     ============================================================ -->
+<section class="section-content" style="background-color:#f9f9f9;">
+    <div class="container">
+        <h2 data-aos="fade-up">Il Mio Approccio</h2>
+        <p style="text-align:center; max-width:600px; margin:0 auto 3rem; color:#666;" data-aos="fade-up" data-aos-delay="100">
+            Ogni percorso nutrizionale inizia con un'analisi approfondita delle tue abitudini, necessità e obiettivi. Il piano viene elaborato secondo criteri scientifici e aggiornato nel tempo.
+        </p>
+
+        <div class="approccio-grid" data-aos="fade-up" data-aos-delay="150">
+            <div class="approccio-intro">
+                <p><strong>Il percorso include:</strong></p>
+                <ul class="approccio-list">
+                    <li><i class='bx bx-check-circle'></i> Anamnesi nutrizionale e clinica approfondita</li>
+                    <li><i class='bx bx-check-circle'></i> Analisi degli esami ematochimici disponibili</li>
+                    <li><i class='bx bx-check-circle'></i> Valutazione delle abitudini alimentari e dello stile di vita</li>
+                    <li><i class='bx bx-check-circle'></i> Misurazioni antropometriche (peso, altezza, circonferenze)</li>
+                    <li><i class='bx bx-check-circle'></i> Definizione degli obiettivi nutrizionali personalizzati</li>
+                    <li><i class='bx bx-check-circle'></i> Elaborazione di un piano alimentare su misura</li>
+                    <li><i class='bx bx-check-circle'></i> Supporto nutrizionale e integrazione (quando indicata)</li>
+                    <li><i class='bx bx-check-circle'></i> Follow-up periodici e aggiornamento del piano</li>
+                </ul>
+            </div>
+            <div class="approccio-photo">
+                <img src="img/martina.jpeg" alt="Studio Dott.ssa Martina Violo">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================
+     4. SPECIALIZZAZIONI — griglia 3+3 con icone
+     ============================================================ -->
+<section id="specializzazioni" class="section-content">
+    <div class="container">
+        <h2 data-aos="fade-up">In cosa posso aiutarti</h2>
+        <p style="text-align:center; max-width:600px; margin:0 auto 3rem; color:#666;" data-aos="fade-up" data-aos-delay="100">
+            Percorsi personalizzati per ogni fase della vita e ogni tipo di esigenza nutrizionale.
+        </p>
+
+        <div class="specializzazioni-grid">
+            <div class="spec-card" data-aos="fade-up">
+                <div class="spec-icon"><i class='bx bx-leaf'></i></div>
+                <h3>Dimagrimento e ricomposizione corporea</h3>
+                <p>Programmi basati su evidenze scientifiche per perdere massa grassa in modo sano, sostenibile e duraturo.</p>
+            </div>
+            <div class="spec-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="spec-icon"><i class='bx bx-heart'></i></div>
+                <h3>Squilibri metabolici</h3>
+                <p>Supporto nutrizionale per insulino resistenza, diabete, ipercolesterolemia e stati infiammatori cronici.</p>
+            </div>
+            <div class="spec-card" data-aos="fade-up" data-aos-delay="200">
+                <div class="spec-icon"><i class='bx bx-happy-heart-eyes'></i></div>
+                <h3>Benessere intestinale</h3>
+                <p>Percorsi per IBS, gonfiore, stipsi, disbiosi intestinale e reflusso, con focus sul microbiota.</p>
+            </div>
+            <div class="spec-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="spec-icon"><i class='bx bx-body'></i></div>
+                <h3>Squilibri ormonali</h3>
+                <p>Piani alimentari personalizzati per PCOS, endometriosi, amenorrea e altri squilibri ormonali femminili.</p>
+            </div>
+            <div class="spec-card" data-aos="fade-up" data-aos-delay="200">
+                <div class="spec-icon"><i class='bx bx-plus-medical'></i></div>
+                <h3>Gravidanza e allattamento</h3>
+                <p>Supporto nutrizionale completo durante la gravidanza e l'allattamento per il benessere di mamma e bambino.</p>
+            </div>
+            <div class="spec-card" data-aos="fade-up" data-aos-delay="300">
+                <div class="spec-icon"><i class='bx bx-run'></i></div>
+                <h3>Nutrizione sportiva</h3>
+                <p>Piani nutrizionali per ottimizzare le performance atletiche, il recupero e la composizione corporea.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================
+     5. RECENSIONI — carosello con fonte esplicita
+     ============================================================ -->
+<section id="recensioni" class="section-content" style="background-color:#f9f9f9;">
+    <div class="container">
+        <h2 data-aos="fade-up">Cosa dicono i pazienti</h2>
+        <p style="text-align:center; max-width:600px; margin:0 auto 3rem; color:#666;" data-aos="fade-up" data-aos-delay="100">
+            Le storie di chi ha scelto di cambiare stile di vita con me.
+        </p>
+
+        <div class="reviews-wrapper">
+            <button class="nav-arrow prev-arrow" onclick="scorriRecensioni(-1)" aria-label="Precedente">
+                <i class='bx bx-chevron-left'></i>
+            </button>
+            <div class="reviews-grid" id="lista-recensioni" data-aos="fade-up" data-aos-delay="200">
+                <div style="text-align:center; width:100%; color:#999;">Caricamento recensioni...</div>
+            </div>
+            <button class="nav-arrow next-arrow" onclick="scorriRecensioni(1)" aria-label="Successivo">
+                <i class='bx bx-chevron-right'></i>
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================
+     6. SERVIZI — card dettagliate con lista inclusa
+     ============================================================ -->
+<section id="servizi" class="section-content">
+    <div class="container">
+        <h2 data-aos="fade-up">Inizia il tuo percorso con me</h2>
+        <p style="text-align:center; max-width:600px; margin:0 auto 3rem; color:#666;" data-aos="fade-up" data-aos-delay="100">
+            Scegli il percorso più adatto alle tue esigenze. Ogni visita è un momento di ascolto e cura personalizzata.
+        </p>
+
+        <div class="servizi-grid">
+
+            <div class="servizio-card featured" data-aos="fade-up">
+                <div class="servizio-sub">Consigliato per iniziare</div>
+                <h3>Prima Visita Nutrizionale</h3>
+                <div class="servizio-price">€ 80 <span style="font-size:1rem; opacity:0.7;">/seduta</span></div>
+                <ul class="servizio-include">
+                    <li><i class='bx bx-check'></i> Durata: 60 minuti</li>
+                    <li><i class='bx bx-check'></i> Anamnesi nutrizionale e clinica approfondita</li>
+                    <li><i class='bx bx-check'></i> Valutazione delle abitudini alimentari e dello stile di vita</li>
+                    <li><i class='bx bx-check'></i> Misurazioni antropometriche</li>
+                    <li><i class='bx bx-check'></i> Definizione degli obiettivi nutrizionali</li>
+                    <li><i class='bx bx-check'></i> Piano alimentare personalizzato incluso</li>
+                </ul>
+                <a href="#prenota" class="btn-outline-white">Prenota Ora</a>
+            </div>
+
+            <div class="servizio-card" data-aos="fade-up" data-aos-delay="150">
+                <div class="servizio-sub">Monitoraggio progressi</div>
+                <h3>Visita di Controllo</h3>
+                <div class="servizio-price">€ 40 <span style="font-size:1rem; color:#999;">/seduta</span></div>
+                <ul class="servizio-include">
+                    <li><i class='bx bx-check'></i> Durata: 30 minuti</li>
+                    <li><i class='bx bx-check'></i> Valutazione dei risultati raggiunti</li>
+                    <li><i class='bx bx-check'></i> Nuove misurazioni antropometriche</li>
+                    <li><i class='bx bx-check'></i> Verifica dell'aderenza al piano alimentare</li>
+                    <li><i class='bx bx-check'></i> Aggiornamento e personalizzazione del piano</li>
+                    <li><i class='bx bx-check'></i> Supporto motivazionale continuo</li>
+                </ul>
+                <a href="#prenota" class="btn">Prenota Ora</a>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================
+     7. PRENOTA — wizard esistente invariato
+     ============================================================ -->
+<section id="prenota" class="section-content" style="background-color:#f9f9f9;">
+    <div class="container">
+        <h2 data-aos="fade-up">Prenota un Appuntamento</h2>
+
+        <div id="booking-choice" class="booking-choice-container" data-aos="zoom-in">
+            <div class="choice-card" onclick="mostraFormOnline()">
+                <div class="icon-circle"><i class='bx bx-calendar'></i></div>
+                <h3>Prenotazione Online</h3>
+                <p>Visualizza il calendario e blocca subito il tuo posto.</p>
+                <span class="btn-fake">Prenota qui &rarr;</span>
+            </div>
+            <a href="https://wa.me/393472796818?text=Salve,%20vorrei%20prenotare%20un%20appuntamento." target="_blank" class="choice-card whatsapp-card">
+                <div class="icon-circle wa"><i class='bx bxl-whatsapp'></i></div>
+                <h3>Via WhatsApp</h3>
+                <p>Scrivimi per concordare insieme orario e dettagli.</p>
+                <span class="btn-fake wa-btn">Apri Chat &rarr;</span>
+            </a>
+        </div>
+
+        <div id="online-form-container" style="display:none;">
+            <button onclick="tornaIndietroScelta()" style="background:none; border:none; color:#668073; font-weight:bold; cursor:pointer; margin-bottom:20px; font-size:1rem;">
+                &larr; Torna alla scelta
+            </button>
+            <div class="wizard-container">
+                <div id="step-1" class="step-box active">
+                    <h2>Di cosa hai bisogno?</h2>
+                    <div class="scelta-servizio">
+                        <div onclick="scegliServizio('prima_visita', 60)" class="btn-card">
+                            <div class="icon-box"><i class='bx bx-user-plus'></i></div>
+                            <h3>Prima Visita</h3>
+                            <p>60 Minuti</p>
+                        </div>
+                        <div onclick="scegliServizio('controllo', 30)" class="btn-card">
+                            <div class="icon-box"><i class='bx bx-refresh'></i></div>
+                            <h3>Controllo</h3>
+                            <p>30 Minuti</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="step-2" class="step-box">
+                    <h2>Scegli il giorno</h2>
+                    <div class="calendar-wrapper">
+                        <div class="calendar-header">
+                            <button onclick="cambiaMese(-1)" class="btn-cal-nav"><i class='bx bx-chevron-left'></i></button>
+                            <h3 id="mese-anno-label">Mese Anno</h3>
+                            <button onclick="cambiaMese(1)" class="btn-cal-nav"><i class='bx bx-chevron-right'></i></button>
+                        </div>
+                        <div class="calendar-weekdays">
+                            <div>Lun</div><div>Mar</div><div>Mer</div><div>Gio</div><div>Ven</div><div>Sab</div><div>Dom</div>
+                        </div>
+                        <div id="calendar-days" class="calendar-grid"></div>
+                    </div>
+                    <button onclick="tornaAlStep(1)" class="btn-back">← Indietro</button>
+                </div>
+
+                <div id="step-3" class="step-box">
+                    <h2>Orari Ottimizzati</h2>
+                    <p style="font-size:0.9rem; color:#666; margin-bottom:15px;">Questi sono gli orari consigliati per te.</p>
+                    <div id="container-consigliati" class="orari-grid"></div>
+                    <p id="no-consigliati" style="display:none; font-size:0.85rem; color:#999; margin-top:10px;">Nessun orario consigliato. Prova "Mostra tutti gli orari" qui sotto.</p>
+                    <div class="divider" style="margin:20px 0; border-top:1px dashed #ccc;"></div>
+                    <button onclick="mostraTuttiOrari()" class="btn-outline">Mostra tutti gli orari</button>
+                    <br><br>
+                    <button onclick="tornaAlStep(2)" class="btn-back">← Cambia Giorno</button>
+                </div>
+
+                <div id="step-4" class="step-box">
+                    <h2>Tutti gli orari</h2>
+                    <div id="container-altri" class="orari-grid"></div>
+                    <br>
+                    <button onclick="tornaAlStep(3)" class="btn-back">← Indietro</button>
+                </div>
+
+                <div id="step-5" class="step-box">
+                    <h2>Conferma Prenotazione</h2>
+                    <div class="riepilogo-box">
+                        <p><i class='bx bx-id-card'></i> <strong id="riepilogo-servizio">...</strong></p>
+                        <p><i class='bx bx-calendar'></i> <strong id="riepilogo-data">...</strong></p>
+                        <p><i class='bx bx-time'></i> <strong id="riepilogo-ora">...</strong></p>
+                    </div>
+                    <form action="prenota.php" method="POST" class="form-finale">
+                        <input type="hidden" name="servizio" id="input-servizio">
+                        <input type="hidden" name="data" id="input-data">
+                        <input type="hidden" name="ora" id="input-ora">
+                        <div class="input-group">
+                            <input type="text" name="nome" required placeholder="Nome e Cognome">
+                            <input type="tel" name="telefono" required placeholder="Telefono">
+                        </div>
+                        <input type="email" name="email" required placeholder="Email">
+                        <div class="privacy-box">
+                            <input type="checkbox" name="privacy_consent" id="privacy_consent" required>
+                            <label for="privacy_consent">Accetto la <a href="privacy.html">Privacy Policy</a></label>
+                        </div>
+                        <button type="submit" class="btn">Invia Richiesta</button>
+                    </form>
+                    <button onclick="tornaAlStep(3)" class="btn-back">← Modifica Ora</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================
+     8. CONTATTI — mappa + info (invariato)
+     ============================================================ -->
+<section id="contatti" class="section-content" style="background-color:#fff;">
+    <div class="container">
+        <h2>Dove Siamo</h2>
+        <div class="contact-wrapper" data-aos="fade-in">
+            <div class="contact-info">
+                <h3>Studio Dott.ssa Violo</h3>
+                <p><strong>Indirizzo:</strong><br>Piazza Enrico Risi, 23<br>03049 Sant'Elia Fiumerapido (FR)</p>
+                <p><strong>Orari:</strong><br>Lun - Sab: 09:00 - 18:00<br>Dom: Chiuso</p>
+                <p><strong>Email:</strong><br><a href="mailto:info@martina.it">info@martina.it</a></p>
+            </div>
+            <div class="map-container">
+                <div id="map-placeholder" class="map-placeholder" style="display:none;">
+                    <div style="padding:20px;">
+                        <i class='bx bx-cookie' style="font-size:40px; margin-bottom:10px;"></i>
+                        <p style="margin-bottom:15px;"><strong>Mappa non visibile</strong><br>Accetta i cookie per vederla.</p>
+                        <button onclick="riapriCookieBanner()" class="btn-outline" style="font-size:0.8rem; padding:0.5rem 1rem !important; min-height:auto !important;">Modifica Preferenze Cookie</button>
+                    </div>
+                </div>
+                <iframe id="google-map"
+                    data-src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2986.375001451012!2d13.863145011646838!3d41.539477071161116!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x133abcd85103f5c5%3A0x1a8f49da4261f975!2sPiazza%20Enrico%20Risi%2C%2023%2C%2003049%20Sant'Elia%20Fiumerapido%20FR!5e0!3m2!1sit!2sit!4v1769185536498!5m2!1sit!2sit"
+                    width="100%" height="100%" style="border:0; display:none;"
+                    allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <div class="container">
+        <div class="footer-content">
+            <p>&copy; <span id="current-year"></span> Dott.ssa Martina Violo - Biologa Nutrizionista</p>
+            <p class="p-iva">P.IVA: 00000000000</p>
+            <p class="albo-text">Iscritta all'Ordine dei Biologi del Lazio e Abruzzo (Sez. A) <br>n. AA_000000</p>
+            <div class="social-icons">
+                <a href="https://www.instagram.com/iltuoprofilo" target="_blank" title="Instagram"><i class='bx bxl-instagram'></i></a>
+                <a href="https://www.facebook.com/iltuoprofilo" target="_blank" title="Facebook"><i class='bx bxl-facebook'></i></a>
+                <a href="https://www.linkedin.com/in/iltuoprofilo" target="_blank" title="LinkedIn"><i class='bx bxl-linkedin'></i></a>
+            </div>
+            <ul class="footer-links">
+                <li><a href="privacy.html">Privacy Policy</a> &bull; <a href="privacy.html#cookie-policy">Cookie Policy</a></li>
+            </ul>
+        </div>
+    </div>
+</footer>
+
+<a href="https://wa.me/393472796818" class="whatsapp-float" target="_blank">
+    <i class='bx bxl-whatsapp'></i>
+    <span class="whatsapp-msg">Scrivimi su WhatsApp</span>
+</a>
+<div class="mobile-sticky-bar">
+    <a href="https://wa.me/393472796818" class="btn-sticky-whatsapp"><i class='bx bxl-whatsapp'></i> WhatsApp</a>
+    <a href="#prenota" class="btn-sticky-book">📅 Prenota Ora</a>
+</div>
+
+<div id="cookie-banner" class="cookie-banner">
+    <div class="cookie-content">
+        <h3>🍪 Rispetto della tua Privacy</h3>
+        <p>Utilizziamo cookie per migliorare l'esperienza e mostrare la mappa. <a href="privacy.html">Privacy Policy</a>.</p>
+        <div class="cookie-buttons">
+            <button id="btn-rifiuta" class="btn-cookie-outline">Rifiuta</button>
+            <button id="btn-accetta" class="btn-cookie-full">Accetta</button>
+        </div>
+    </div>
+</div>
+
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const body = document.body;
+    const preloader = document.getElementById('preloader');
+    const counterElement = document.querySelector('.preload-counter');
+    const header = document.querySelector('header');
+
+    function svelaSito() {
+        body.classList.remove('is-loading');
+        body.classList.remove('no-scroll');
+        if(preloader) { preloader.style.opacity='0'; preloader.style.pointerEvents='none'; }
+    }
+
+    if (sessionStorage.getItem('intro_visualizzata')) {
+        svelaSito();
+        if(preloader) preloader.style.display='none';
+    } else {
+        body.classList.add('no-scroll');
+        sessionStorage.setItem('intro_visualizzata','true');
+        let count=0;
+        const updateCounter = setInterval(()=>{
+            count++;
+            if(count<=100 && counterElement) { counterElement.innerText=count+"%"; }
+            else {
+                clearInterval(updateCounter);
+                setTimeout(()=>{
+                    preloader.classList.add('fade-text');
+                    setTimeout(()=>{
+                        let h=header?header.offsetHeight:80;
+                        preloader.style.height=h+'px';
+                        body.classList.remove('no-scroll');
+                        setTimeout(()=>{ body.classList.remove('is-loading'); preloader.style.opacity='0'; preloader.style.pointerEvents='none'; },1000);
+                    },1000);
+                },800);
+            }
+        },45);
+    }
+
+    const menuToggle = document.getElementById('mobile-menu');
+    const navMenu = document.querySelector('.nav-menu');
+    if(menuToggle) {
+        menuToggle.addEventListener('click',()=>{
+            navMenu.classList.toggle('active');
+            const icon=menuToggle.querySelector('i');
+            icon.classList.toggle('bx-menu');
+            icon.classList.toggle('bx-x');
+        });
+    }
+
+    AOS.init({ duration:1000, once:true, offset:100 });
+
+    // Cookie banner
+    const banner=document.getElementById("cookie-banner");
+    const btnAccetta=document.getElementById("btn-accetta");
+    const btnRifiuta=document.getElementById("btn-rifiuta");
+
+    function gestisciMappa(attiva){
+        const iframe=document.getElementById("google-map");
+        const placeholder=document.getElementById("map-placeholder");
+        if(attiva&&iframe){ if(!iframe.src) iframe.src=iframe.getAttribute("data-src"); iframe.style.display="block"; if(placeholder) placeholder.style.display="none"; }
+        else { if(iframe) iframe.style.display="none"; if(placeholder) placeholder.style.display="flex"; }
+    }
+
+    if(!localStorage.getItem("cookie_consent")){ gestisciMappa(false); setTimeout(()=>{ if(banner) banner.classList.add("show"); },2000); }
+    else if(localStorage.getItem("cookie_consent")==="accepted"){ gestisciMappa(true); }
+    else { gestisciMappa(false); }
+
+    if(btnAccetta) btnAccetta.addEventListener("click",()=>{ localStorage.setItem("cookie_consent","accepted"); if(banner) banner.classList.remove("show"); gestisciMappa(true); });
+    if(btnRifiuta) btnRifiuta.addEventListener("click",()=>{ localStorage.setItem("cookie_consent","denied"); if(banner) banner.classList.remove("show"); gestisciMappa(false); });
+    window.riapriCookieBanner=function(){ if(banner) banner.classList.add("show"); };
+
+    // Recensioni
+    const containerRecensioni=document.getElementById('lista-recensioni');
+    if(containerRecensioni){
+        fetch('get_recensioni.php')
+            .then(r=>r.json())
+            .then(data=>{
+                containerRecensioni.innerHTML='';
+                if(data.length===0){ containerRecensioni.innerHTML='<p style="text-align:center;width:100%;color:#888;">Nessuna recensione ancora.</p>'; return; }
+                data.forEach((review,index)=>{
+                    let starsHtml='';
+                    for(let i=0;i<5;i++) starsHtml+=i<review.voto?'★':'<span style="color:#ddd">☆</span>';
+                    const iniziale=review.nome.charAt(0).toUpperCase();
+                    const card=document.createElement('div');
+                    card.className='review-card';
+                    card.style.animationDelay=`${index*0.15}s`;
+                    card.innerHTML=`
+                        <div class="review-quote">"</div>
+                        <p class="review-text">${review.testo}</p>
+                        <div class="review-author">
+                            <div class="author-avatar">${iniziale}</div>
+                            <div class="author-info">
+                                <h4>${review.nome}</h4>
+                                <div class="stars">${starsHtml}</div>
+                                <div class="review-source">Recensione verificata</div>
+                            </div>
+                        </div>`;
+                    containerRecensioni.appendChild(card);
+                });
+            })
+            .catch(err=>{ containerRecensioni.innerHTML='<p style="text-align:center;">Errore caricamento.</p>'; });
+    }
+});
+
+// Anno corrente
+const yearSpan=document.getElementById('current-year');
+if(yearSpan) yearSpan.textContent=new Date().getFullYear();
+
+// Scroll recensioni
+function scorriRecensioni(direzione){
+    const container=document.getElementById('lista-recensioni');
+    if(container) container.scrollBy({ left:370*direzione, behavior:'smooth' });
+}
+
+// Statistiche
+const orarioIngresso=Date.now();
+window.utenteHaPrenotato=0;
+document.addEventListener('visibilitychange',function(){
+    if(document.visibilityState==='hidden'){
+        const tempoPassato=Math.floor((Date.now()-orarioIngresso)/1000);
+        const datiStatistiche=new FormData();
+        datiStatistiche.append('tempo',tempoPassato);
+        datiStatistiche.append('prenotato',window.utenteHaPrenotato);
+        navigator.sendBeacon('api_statistiche.php',datiStatistiche);
+    }
+});
+
+// Wizard prenotazioni
+let datiPrenotazione={ servizio:'', durata:0, data:'', dataVisual:'', ora:'' };
+let dataCorrenteCal=new Date();
+
+function mostraStep(stepId){
+    document.querySelectorAll('.step-box').forEach(el=>el.classList.remove('active'));
+    const step=document.getElementById(stepId);
+    if(step){ step.classList.add('active'); step.scrollIntoView({behavior:'smooth',block:'start'}); }
+    if(stepId==='step-2') renderCalendario();
+}
+function tornaAlStep(n){ mostraStep('step-'+n); }
+function tornaIndietroScelta(){ document.getElementById('online-form-container').style.display='none'; document.getElementById('booking-choice').style.display='flex'; }
+function mostraFormOnline(){ document.getElementById('booking-choice').style.display='none'; document.getElementById('online-form-container').style.display='block'; }
+function scegliServizio(tipo,minuti){ datiPrenotazione.servizio=tipo; datiPrenotazione.durata=minuti; document.getElementById('input-servizio').value=tipo; mostraStep('step-2'); }
+
+function renderCalendario(){
+    const grid=document.getElementById('calendar-days');
+    const label=document.getElementById('mese-anno-label');
+    if(!grid) return;
+    grid.innerHTML='';
+    const year=dataCorrenteCal.getFullYear();
+    const month=dataCorrenteCal.getMonth();
+    const nomiMesi=["Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre"];
+    label.innerText=`${nomiMesi[month]} ${year}`;
+    const firstDayIndex=new Date(year,month,1).getDay();
+    const startDay=(firstDayIndex===0)?6:firstDayIndex-1;
+    const daysInMonth=new Date(year,month+1,0).getDate();
+    for(let i=0;i<startDay;i++) grid.innerHTML+=`<div class="day-cell empty"></div>`;
+    for(let d=1;d<=daysInMonth;d++){
+        let cell=document.createElement('div');
+        cell.className='day-cell';
+        cell.innerText=d;
+        cell.setAttribute('data-day',d);
+        cell.onclick=function(){ if(cell.classList.contains('full')) return; document.querySelectorAll('.day-cell').forEach(c=>c.classList.remove('selected')); cell.classList.add('selected'); selezionaDataCal(d,month,year); };
+        grid.appendChild(cell);
+    }
+    aggiornaStatoGiorni(month+1,year);
+}
+
+function aggiornaStatoGiorni(mese,anno){
+    fetch('api_check_mese.php',{ method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({mese,anno,durata:datiPrenotazione.durata}) })
+        .then(r=>r.json())
+        .then(giorniFull=>{ if(Array.isArray(giorniFull)) giorniFull.forEach(g=>{ const cell=document.querySelector(`.day-cell[data-day="${g}"]`); if(cell){ cell.classList.add('full'); cell.title="Non disponibile"; } }); })
+        .catch(err=>console.error("Errore check mese:",err));
+}
+
+function cambiaMese(delta){ dataCorrenteCal.setMonth(dataCorrenteCal.getMonth()+delta); renderCalendario(); }
+
+function selezionaDataCal(giorno,mese,anno){
+    let mm=(mese+1).toString().padStart(2,'0');
+    let dd=giorno.toString().padStart(2,'0');
+    datiPrenotazione.data=`${anno}-${mm}-${dd}`;
+    datiPrenotazione.dataVisual=`${dd}-${mm}-${anno}`;
+    document.getElementById('input-data').value=datiPrenotazione.data;
+    caricaOrariReali();
+    setTimeout(()=>mostraStep('step-3'),200);
+}
+
+function caricaOrariReali(){
+    const containerConsigliati=document.getElementById('container-consigliati');
+    const containerAltri=document.getElementById('container-altri');
+    const msgNoConsigliati=document.getElementById('no-consigliati');
+    containerConsigliati.innerHTML='<div style="font-size:0.9rem;color:#666;">Controllo disponibilità...</div>';
+    containerAltri.innerHTML='';
+    if(msgNoConsigliati) msgNoConsigliati.style.display='none';
+    fetch('api_check_orari.php',{ method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({data:datiPrenotazione.data,durata:datiPrenotazione.durata}) })
+        .then(r=>r.json())
+        .then(data=>{
+            containerConsigliati.innerHTML='';
+            if(data.consigliati&&data.consigliati.length>0){ data.consigliati.forEach(ora=>creaBottoneOrario(ora,containerConsigliati,true)); }
+            else { if(msgNoConsigliati) msgNoConsigliati.style.display='block'; }
+            if(data.altri&&data.altri.length>0){ data.altri.forEach(ora=>creaBottoneOrario(ora,containerAltri,false)); }
+            else if(!data.consigliati||data.consigliati.length===0){ containerAltri.innerHTML='<p style="font-size:0.8rem;">Nessun orario disponibile.</p>'; }
+        })
+        .catch(err=>{ containerConsigliati.innerHTML='<p style="color:red;font-size:0.8rem;">Errore caricamento.</p>'; });
+}
+
+function creaBottoneOrario(ora,container,isConsigliato){
+    let btn=document.createElement('div');
+    btn.className='time-slot';
+    if(isConsigliato){ btn.style.border='2px solid #668073'; btn.style.backgroundColor='#f4f8f6'; btn.style.fontWeight='bold'; }
+    btn.innerText=ora;
+    btn.onclick=function(){ confermaOra(ora); };
+    container.appendChild(btn);
+}
+
+function mostraTuttiOrari(){ mostraStep('step-4'); }
+
+function confermaOra(ora){
+    datiPrenotazione.ora=ora;
+    document.getElementById('input-ora').value=ora;
+    const riepServizio=document.getElementById('riepilogo-servizio');
+    const riepData=document.getElementById('riepilogo-data');
+    const riepOra=document.getElementById('riepilogo-ora');
+    if(riepServizio) riepServizio.innerText=datiPrenotazione.servizio.replace('_',' ').toUpperCase();
+    if(riepData) riepData.innerText=datiPrenotazione.dataVisual;
+    if(riepOra) riepOra.innerText=datiPrenotazione.ora;
+    mostraStep('step-5');
+}
+</script>
+</body>
+</html>
