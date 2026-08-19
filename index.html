@@ -145,15 +145,7 @@
 </style>
 </head>
 
-<body class="is-loading">
-
-<div id="preloader">
-    <div class="preloader-content">
-        <h1 class="preload-name">Martina Violo</h1>
-        <p class="preload-sub">Nutrizione Consapevole</p>
-    </div>
-    <div class="preload-counter">0%</div>
-</div>
+<body>
 
 <header>
     <div class="container">
@@ -646,42 +638,6 @@
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-    const body = document.body;
-    const preloader = document.getElementById('preloader');
-    const counterElement = document.querySelector('.preload-counter');
-    const header = document.querySelector('header');
-
-    function svelaSito() {
-        body.classList.remove('is-loading');
-        body.classList.remove('no-scroll');
-        if(preloader) { preloader.style.opacity='0'; preloader.style.pointerEvents='none'; }
-    }
-
-    if (sessionStorage.getItem('intro_visualizzata')) {
-        svelaSito();
-        if(preloader) preloader.style.display='none';
-    } else {
-        body.classList.add('no-scroll');
-        sessionStorage.setItem('intro_visualizzata','true');
-        let count=0;
-        const updateCounter = setInterval(()=>{
-            count++;
-            if(count<=100 && counterElement) { counterElement.innerText=count+"%"; }
-            else {
-                clearInterval(updateCounter);
-                setTimeout(()=>{
-                    preloader.classList.add('fade-text');
-                    setTimeout(()=>{
-                        let h=header?header.offsetHeight:80;
-                        preloader.style.height=h+'px';
-                        body.classList.remove('no-scroll');
-                        setTimeout(()=>{ body.classList.remove('is-loading'); preloader.style.opacity='0'; preloader.style.pointerEvents='none'; },1000);
-                    },1000);
-                },800);
-            }
-        },45);
-    }
-
     const menuToggle = document.getElementById('mobile-menu');
     const navMenu = document.querySelector('.nav-menu');
     if(menuToggle) {
