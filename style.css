@@ -72,7 +72,12 @@ header {
 header .container { display: flex; justify-content: space-between; align-items: center; }
 
 .logo-link { display: flex; align-items: center; gap: 0.94rem; text-decoration: none; }
-.logo-img { height: 4.06rem; width: auto; transition: transform 0.3s ease; }
+.logo-img {
+    height: 4.06rem;
+    width: auto;
+    filter: drop-shadow(0 0 0.18rem #FBF3E4);
+    transition: transform 0.3s ease;
+}
 .logo-link:hover .logo-img { transform: rotate(-10deg) scale(1.1); }
 
 .brand-text { display: flex; flex-direction: column; justify-content: center; line-height: 1.1; }
@@ -246,7 +251,9 @@ body.no-scroll { overflow: hidden; }
 }
 .scelta-servizio { display: flex; gap: 1.25rem; margin-top: 1.25rem; }
 .btn-card { flex: 1; background: #ffffff; padding: 1.875rem; border-radius: 1.25rem; cursor: pointer; transition: 0.3s ease; box-shadow: 0 0.625rem 1.56rem rgba(0,0,0,0.05); }
-.btn-card:hover { background: #668073; color: #fff; }
+.btn-card:hover { background: #f4f8f6; color: #1A2621; }
+.btn-card:hover h3,
+.btn-card:hover p { color: #1A2621; }
 
 /* Calendario & Orari */
 .calendar-wrapper { padding: 1.25rem; max-width: 25rem; margin: 0 auto; }
@@ -1226,19 +1233,52 @@ section,
 }
 
 /* Pulsanti Navigazione */
+.booking-back,
 .btn-back {
-    background: none; border: none; color: #999; 
-    cursor: pointer; margin-top: 20px; font-weight: 600;
-    font-size: 0.9rem; transition: 0.3s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    min-height: 2.75rem;
+    padding: 0.65rem 1.25rem;
+    border: 2px solid #668073;
+    border-radius: 3.125rem;
+    background: transparent;
+    color: #668073;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.03rem;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
 }
-.btn-back:hover { color: #333; }
+.booking-back {
+    margin-bottom: 1.25rem;
+}
+.btn-back {
+    margin-top: 1.25rem;
+}
+.booking-back:hover,
+.btn-back:hover {
+    background: #668073 !important;
+    color: #FFFFFF !important;
+    border-color: #668073 !important;
+    transform: translateY(-0.18rem);
+    box-shadow: 0 0.94rem 1.875rem rgba(102, 128, 115, 0.35);
+}
 
 .btn-outline {
-    background: white; border: 1px solid #668073; color: #668073;
-    padding: 10px 20px; border-radius: 5px; cursor: pointer;
-    font-size: 0.85rem; width: 100%;
+    background: transparent;
+    border: 2px solid #668073;
+    color: #668073;
+    width: 100%;
 }
-.btn-outline:hover { background: #f0f0f0; }
+.btn-outline:hover {
+    background: linear-gradient(135deg, #1A2621 0%, #2F3E35 100%);
+    color: #FFFFFF;
+    border-color: transparent;
+}
 
 /* --- 8. MOBILE RESPONSIVE --- */
 @media (max-width: 768px) {
@@ -1463,19 +1503,28 @@ section,
         text-align: left;
         padding: 1rem;
     }
-    /* Bottone indietro: rimane compatto */
+    /* Bottone indietro: compatto ma visibile */
     .btn-back {
-        background: none;
-        border: none;
+        background: transparent !important;
+        border: 2px solid #668073 !important;
         color: #668073;
         font-weight: bold;
         cursor: pointer;
         font-size: 0.9rem;
-        padding: 0.5rem 0 !important;
-        min-height: unset !important;
+        padding: 0.55rem 1.1rem !important;
+        min-height: 2.75rem !important;
         width: auto !important;
         margin-top: 1rem;
-        display: inline-block !important;
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+        border-radius: 3.125rem !important;
+        transition: all 0.3s ease;
+    }
+    .btn-back:hover {
+        background: #668073 !important;
+        color: #FFFFFF !important;
+        border-color: #668073 !important;
     }
 }
 
@@ -1517,6 +1566,12 @@ section,
 @media (max-width: 768px) {
     body {
         padding-bottom: 4.5rem;
+    }
+    .mobile-sticky-bar {
+        justify-content: space-between;
+    }
+    .mobile-sticky-bar a {
+        flex: 0 0 calc(50% - 0.25rem) !important;
     }
     /* Il cookie banner non deve sovrapporsi alla sticky bar.
        Solo .show viene alzato: lo stato hidden resta bottom:-100% */
@@ -1570,4 +1625,33 @@ section,
     .logo-img { height: 3rem; }
     .brand-name { font-size: 1.2rem; }
     .dott-title { font-size: 0.7rem; }
+}
+
+/* Frecce calendario: controlli compatti e coerenti con la palette del sito */
+.btn-cal-nav {
+    width: 2.5rem !important;
+    height: 2.5rem !important;
+    min-height: 2.5rem !important;
+    flex: 0 0 2.5rem !important;
+    padding: 0 !important;
+    border: none !important;
+    border-radius: 50% !important;
+    background: linear-gradient(135deg, #668073 0%, #7da090 100%) !important;
+    color: #FFFFFF !important;
+    font-size: 1.35rem !important;
+    line-height: 1 !important;
+    letter-spacing: 0 !important;
+    text-transform: none !important;
+    box-shadow: 0 0.4rem 0.9rem rgba(102, 128, 115, 0.2);
+    transition: all 0.3s ease;
+}
+.btn-cal-nav:hover {
+    background: linear-gradient(135deg, #1A2621 0%, #2F3E35 100%) !important;
+    color: #FFFFFF !important;
+    transform: translateY(-0.12rem);
+    box-shadow: 0 0.7rem 1.2rem rgba(102, 128, 115, 0.3);
+}
+.btn-cal-nav:focus-visible {
+    outline: 3px solid rgba(102, 128, 115, 0.35);
+    outline-offset: 3px;
 }

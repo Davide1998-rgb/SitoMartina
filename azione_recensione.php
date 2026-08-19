@@ -7,6 +7,7 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
 }
 
 require_once 'db_connect.php';
+require_once 'aggiorna_index_recensioni.php';
 
 if (isset($_GET['id']) && isset($_GET['action'])) {
     $id     = intval($_GET['id']);
@@ -27,6 +28,7 @@ if (isset($_GET['id']) && isset($_GET['action'])) {
     }
 
     if ($conn->query($sql) === TRUE) {
+        aggiornaIndexRecensioni($conn);
         echo "<div style='font-family:sans-serif; text-align:center; padding:50px;'>
                 <h1 style='color:$color;'>Eseguito!</h1>
                 <p>$msg</p>

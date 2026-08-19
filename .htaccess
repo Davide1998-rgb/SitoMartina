@@ -1,0 +1,8 @@
+# Protezione file sensibili
+<Files "config_mail.php">
+    Order Allow,Deny
+    Deny from all
+</Files>
+
+# Impedisce di vedere la lista dei file nelle cartelle
+Options -Indexes

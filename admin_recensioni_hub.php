@@ -8,6 +8,7 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
 }
 
 require_once 'db_connect.php';
+require_once 'aggiorna_index_recensioni.php';
 
 // --- LOGICA 1: AZIONI RAPIDE (Approva / Elimina) ---
 if (isset($_GET['action']) && isset($_GET['id'])) {
@@ -27,6 +28,7 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
     $stmt->bind_param("i", $id_rec);
     $stmt->execute();
     $stmt->close();
+    aggiornaIndexRecensioni($conn);
 
     header("Location: admin_recensioni_hub.php");
     exit;

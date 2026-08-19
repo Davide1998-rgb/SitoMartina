@@ -1,0 +1,33 @@
+User-agent: *
+Allow: /
+
+Disallow: /admin_azioni_calendario.php
+Disallow: /admin_calendario.php
+Disallow: /admin_gestisci.php
+Disallow: /admin_invia_dieta.php
+Disallow: /admin_manuale.php
+Disallow: /admin_planner.php
+Disallow: /admin_recensioni_hub.php
+Disallow: /admin_recensioni.php
+Disallow: /admin_richieste.php
+Disallow: /admin_statistiche.php
+Disallow: /api_check_mese.php
+Disallow: /api_check_orari.php
+Disallow: /api_statistiche.php
+Disallow: /azione_recensione.php
+Disallow: /conferma.php
+Disallow: /conferma_cliente.php
+Disallow: /conferma_richiesta.html
+Disallow: /cron_promemoria.php
+Disallow: /db_connect.php
+Disallow: /invia_richiesta_recensione.php
+Disallow: /login.php
+Disallow: /logout.php
+Disallow: /processa_invia_dieta.php
+Disallow: /processa_invio_recensioni.php
+Disallow: /rifiuta.php
+Disallow: /salva_recensione.php
+Disallow: /salva_recensione_pubblica.php
+Disallow: /setup_password.php
+
+Sitemap: https://www.tuosito.it/sitemap.xml

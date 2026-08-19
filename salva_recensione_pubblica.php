@@ -24,7 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     $stmt = $conn->prepare(
-        "INSERT INTO recensioni (nome, testo, voto, approvata) VALUES (?, ?, ?, 0)"
+        "INSERT INTO recensioni (nome, testo, voto, fonte, approvata) VALUES (?, ?, ?, 'sito', 0)"
     );
     $stmt->bind_param("ssi", $nome, $testo, $voto);
 

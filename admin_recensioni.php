@@ -60,6 +60,9 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
             background: #fff;
         }
 
+        .checkbox-row { display:flex; align-items:center; gap:8px; margin-top:15px; color:#444; font-size:0.9rem; }
+        .checkbox-row input { width:auto; margin:0; }
+
         .btn { 
             background: #668073; 
             color: white; 
@@ -91,6 +94,9 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
 <?php include 'admin_topbar.php'; ?>
     <div class="container">
        <h2 style="margin-top:0; color:#1A2621;">Nuova Recensione</h2>
+        <p style="color:#666; font-size:0.9rem; line-height:1.5;">
+            La recensione verrà pubblicata subito e inserita direttamente nella sezione recensioni della home.
+        </p>
         <form action="salva_recensione.php" method="POST">
             <label>Nome Cliente</label>
             <input type="text" name="nome" required placeholder="Es. Laura B.">
@@ -106,6 +112,11 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
 		<option value="2">2 Stelle</option>
                 <option value="1">1 Stelle</option>
             </select>
+
+            <label class="checkbox-row">
+                <input type="checkbox" name="fonte" value="google">
+                Recensione da Google
+            </label>
             
             <button type="submit" class="btn">Salva Recensione</button>
         </form>

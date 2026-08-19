@@ -9,6 +9,7 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
 }
 
 require_once 'db_connect.php';
+require_once 'aggiorna_index_recensioni.php';
 
 $icona    = "";
 $titolo   = "";
@@ -20,6 +21,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nome  = trim($_POST['nome'] ?? '');
     $testo = trim($_POST['testo'] ?? '');
     $voto  = (int)$_POST['voto'];
+    $fonte = ($_POST['fonte'] ?? '') === 'google' ? 'google' : 'sito';
 
     if ($nome === '' || strlen($nome) > 150 || $testo === '' || strlen($testo) > 5000 || $voto < 1 || $voto > 5) {
         die("Dati recensione non validi. Torna indietro e riprova.");
@@ -27,15 +29,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // FIX: prepared statement al posto di real_escape_string + interpolazione
     $stmt = $conn->prepare(
-        "INSERT INTO recensioni (nome, testo, voto, approvata) VALUES (?, ?, ?, 1)"
+        "INSERT INTO recensioni (nome, testo, voto, fonte, approvata) VALUES (?, ?, ?, ?, 1)"
     );
-    $stmt->bind_param("ssi", $nome, $testo, $voto);
+    $stmt->bind_param("ssis", $nome, $testo, $voto, $fonte);
 
     if ($stmt->execute()) {
+        $indexAggiornato = aggiornaIndexRecensioni($conn);
         $colore    = "#668073";
         $icona     = "bx-check-circle";
         $titolo    = "Recensione Salvata!";
         $messaggio = "La recensione di <strong>" . htmlspecialchars($nome) . "</strong> è stata aggiunta con successo.";
+        if (!$indexAggiornato) {
+            $messaggio .= "<br><small>Attenzione: il database è aggiornato, ma la home non è stata rigenerata.</small>";
+        }
     } else {
         $colore    = "#d9534f";
         $icona     = "bx-error-circle";

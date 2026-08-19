@@ -1,0 +1,2 @@
+ALTER TABLE recensioni
+    ADD COLUMN fonte VARCHAR(20) NOT NULL DEFAULT 'sito' AFTER voto;
