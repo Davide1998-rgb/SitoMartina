@@ -133,6 +133,7 @@
 /* --- RECENSIONI: citazione + fonte --- */
 .review-card { background: #fff; border-radius: 1.25rem; padding: 2rem; box-shadow: 0 4px 15px rgba(0,0,0,0.05); flex-shrink: 0; width: 340px; display: flex; flex-direction: column; border-left: 4px solid #668073; }
 .review-quote { font-size: 2.5rem; color: #668073; line-height: 1; margin-bottom: 0.5rem; font-family: Georgia, serif; }
+.review-quote-close { text-align: right; margin: -0.4rem 0 0.5rem; }
 .review-text { font-size: 0.92rem; color: #555; line-height: 1.7; flex-grow: 1; font-style: italic; margin-bottom: 1.2rem; }
 .review-author { display: flex; align-items: center; gap: 0.8rem; }
 .author-avatar { width: 2.5rem; height: 2.5rem; border-radius: 50%; background: #668073; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1rem; flex-shrink: 0; }
@@ -337,7 +338,21 @@
                 <!-- RECENSIONI_STATICHE_INIZIO -->
             <article class="review-card">
                 <div class="review-quote">&quot;</div>
+                <p class="review-text">Ottimi pompini, complimenti</p>
+                <div class="review-quote review-quote-close">&quot;</div>
+                <div class="review-author">
+                    <div class="author-avatar">D</div>
+                    <div class="author-info">
+                        <h4>Davide Di Gennaro</h4>
+                        <div class="stars" aria-label="5 stelle su 5">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                        <div class="review-source review-source-google"><img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google"> Recensione da Google</div>
+                    </div>
+                </div>
+            </article>
+            <article class="review-card">
+                <div class="review-quote">&quot;</div>
                 <p class="review-text">Funzionerà?</p>
+                <div class="review-quote review-quote-close">&quot;</div>
                 <div class="review-author">
                     <div class="author-avatar">R</div>
                     <div class="author-info">
@@ -350,6 +365,7 @@
             <article class="review-card">
                 <div class="review-quote">&quot;</div>
                 <p class="review-text">Bei pompini....</p>
+                <div class="review-quote review-quote-close">&quot;</div>
                 <div class="review-author">
                     <div class="author-avatar">A</div>
                     <div class="author-info">
@@ -362,6 +378,7 @@
             <article class="review-card">
                 <div class="review-quote">&quot;</div>
                 <p class="review-text">Nutrizionista scadente, bei perizomi, soprattutto quello rosso che le ha regalato il fidanzato</p>
+                <div class="review-quote review-quote-close">&quot;</div>
                 <div class="review-author">
                     <div class="author-avatar">A</div>
                     <div class="author-info">
@@ -374,6 +391,7 @@
             <article class="review-card">
                 <div class="review-quote">&quot;</div>
                 <p class="review-text">Come nutrizionista mhh.... Ma i pompini....... 5 stelle</p>
+                <div class="review-quote review-quote-close">&quot;</div>
                 <div class="review-author">
                     <div class="author-avatar">D</div>
                     <div class="author-info">
@@ -386,6 +404,7 @@
             <article class="review-card">
                 <div class="review-quote">&quot;</div>
                 <p class="review-text">Top Nutrizionista, ottimi soffocotti</p>
+                <div class="review-quote review-quote-close">&quot;</div>
                 <div class="review-author">
                     <div class="author-avatar">A</div>
                     <div class="author-info">

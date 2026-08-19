@@ -30,6 +30,7 @@ function aggiornaIndexRecensioni(mysqli $conn): bool
         $cards .= "            <article class=\"review-card\">\n"
             . "                <div class=\"review-quote\">&quot;</div>\n"
             . "                <p class=\"review-text\">{$testo}</p>\n"
+            . "                <div class=\"review-quote review-quote-close\">&quot;</div>\n"
             . "                <div class=\"review-author\">\n"
             . "                    <div class=\"author-avatar\">{$iniziale}</div>\n"
             . "                    <div class=\"author-info\">\n"
