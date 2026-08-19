@@ -52,9 +52,9 @@
 .hero-badge-strip .stars { color: #f1c40f; font-size: 1rem; letter-spacing: 1px; }
 .hero-badge-strip span { font-size: 0.82rem; color: #555; }
 .hero-badge-strip strong { color: #1A2621; }
-.hero-image-wrapper { position: relative; }
+.hero-image-wrapper { position: relative; isolation: isolate; }
 .hero-img { width: 100%; border-radius: 2rem; object-fit: cover; aspect-ratio: 4/5; box-shadow: 0 2rem 4rem rgba(0,0,0,0.12); position: relative; z-index: 1; }
-.blob-bg { position: absolute; width: 85%; height: 85%; background: #E8F5E9; border-radius: 40% 60% 55% 45% / 45% 55% 40% 60%; top: 8%; left: 8%; z-index: 0; }
+.blob-bg { position: absolute; width: 92%; height: 92%; background: #E8F5E9; border-radius: 40% 60% 55% 45% / 45% 55% 40% 60%; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 0; pointer-events: none; }
 @media (max-width: 768px) {
     #hero { padding-top: 7rem; min-height: auto; }
     .hero-container { grid-template-columns: 1fr; gap: 2rem; }
@@ -496,9 +496,9 @@
         <h2>Dove Siamo</h2>
         <div class="contact-wrapper" data-aos="fade-in">
             <div class="contact-info">
-                <h3>Studio Dott.ssa Violo</h3>
-                <p><strong>Indirizzo:</strong><br>Piazza Enrico Risi, 23<br>03049 Sant'Elia Fiumerapido (FR)</p>
-                <p><strong>Orari:</strong><br>Lun - Sab: 09:00 - 18:00<br>Dom: Chiuso</p>
+                <h3>Studio Dott.ssa Martina Violo</h3>
+                <p><strong>Indirizzo:</strong><br>Corso della Repubblica, 5<br>03043 Cassino (FR)</p>
+                <p><strong>Orari:</strong><br>Martedì e Giovedì: 09:00 - 19:00<br>Sabato: 14:00 - 19:00<br>Dom: Chiuso</p>
                 <p><strong>Email:</strong><br><a href="mailto:info@martina.it">info@martina.it</a></p>
             </div>
             <div class="map-container">
@@ -510,10 +510,9 @@
                     </div>
                 </div>
                 <iframe id="google-map"
-                    data-src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2986.375001451012!2d13.863145011646838!3d41.539477071161116!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x133abcd85103f5c5%3A0x1a8f49da4261f975!2sPiazza%20Enrico%20Risi%2C%2023%2C%2003049%20Sant'Elia%20Fiumerapido%20FR!5e0!3m2!1sit!2sit!4v1769185536498!5m2!1sit!2sit"
-                    width="100%" height="100%" style="border:0; display:none;"
-                    allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
-                </iframe>
+                   src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2988.5685082352406!2d13.823210311644386!3d41.491953471167015!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x133abc0966335143%3A0x8628ae13996856a4!2sC.so%20della%20Repubblica%2C%205%2C%2003043%20Cassino%20FR!5e0!3m2!1sit!2sit!4v1787132734799!5m2!1sit!2sit" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin">
+
+                   </iframe>
             </div>
         </div>
     </div>
@@ -632,6 +631,10 @@ document.addEventListener("DOMContentLoaded", function() {
     // Recensioni
     const containerRecensioni=document.getElementById('lista-recensioni');
     if(containerRecensioni){
+        const escapeHTML = value => String(value).replace(/[&<>"']/g, character => ({
+            '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#039;'
+        }[character]));
+
         fetch('get_recensioni.php')
             .then(r=>r.json())
             .then(data=>{
@@ -646,11 +649,11 @@ document.addEventListener("DOMContentLoaded", function() {
                     card.style.animationDelay=`${index*0.15}s`;
                     card.innerHTML=`
                         <div class="review-quote">"</div>
-                        <p class="review-text">${review.testo}</p>
+                        <p class="review-text">${escapeHTML(review.testo)}</p>
                         <div class="review-author">
                             <div class="author-avatar">${iniziale}</div>
                             <div class="author-info">
-                                <h4>${review.nome}</h4>
+                                <h4>${escapeHTML(review.nome)}</h4>
                                 <div class="stars">${starsHtml}</div>
                                 <div class="review-source">Recensione verificata</div>
                             </div>

@@ -2,6 +2,12 @@
 // FILE: salva_recensione.php
 // Salva una recensione inserita manualmente dall'admin (già approvata).
 
+session_start();
+if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
+    header("Location: login.php");
+    exit;
+}
+
 require_once 'db_connect.php';
 
 $icona    = "";
@@ -11,9 +17,13 @@ $colore   = "";
 $link_back = "dashboard.php";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $nome  = $_POST['nome'];
-    $testo = $_POST['testo'];
+    $nome  = trim($_POST['nome'] ?? '');
+    $testo = trim($_POST['testo'] ?? '');
     $voto  = (int)$_POST['voto'];
+
+    if ($nome === '' || strlen($nome) > 150 || $testo === '' || strlen($testo) > 5000 || $voto < 1 || $voto > 5) {
+        die("Dati recensione non validi. Torna indietro e riprova.");
+    }
 
     // FIX: prepared statement al posto di real_escape_string + interpolazione
     $stmt = $conn->prepare(

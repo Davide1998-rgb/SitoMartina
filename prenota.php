@@ -6,20 +6,49 @@ require 'PHPMailer/PHPMailer.php';
 require 'PHPMailer/SMTP.php';
 require_once 'config_mail.php';
 require_once 'db_connect.php';
+date_default_timezone_set('Europe/Rome');
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (!isset($_POST['privacy_consent'])) { die("Devi accettare la privacy."); }
 
-    $nome     = $_POST['nome'];
-    $email    = $_POST['email'];
-    $telefono = $_POST['telefono'];
-    $servizio = $_POST['servizio'];
-    $data_giorno = $_POST['data'];
-    $ora_inizio  = $_POST['ora'];
-    $data_it     = date("d/m/Y", strtotime($data_giorno));
-    $durata      = ($servizio == 'prima_visita') ? 60 : 30;
-    $data_inizio_db = "$data_giorno $ora_inizio:00";
-    $data_fine_db   = date('Y-m-d H:i:s', strtotime($data_inizio_db . " + $durata minutes"));
+    $nome        = trim($_POST['nome'] ?? '');
+    $email       = trim($_POST['email'] ?? '');
+    $telefono    = trim($_POST['telefono'] ?? '');
+    $servizio    = $_POST['servizio'] ?? '';
+    $data_giorno = $_POST['data'] ?? '';
+    $ora_inizio  = $_POST['ora'] ?? '';
+    $data_inizio = DateTime::createFromFormat('!Y-m-d H:i', "$data_giorno $ora_inizio");
+    $errori_data = DateTime::getLastErrors();
+
+    $orario_valido = $data_inizio &&
+        ($errori_data === false || ($errori_data['warning_count'] === 0 && $errori_data['error_count'] === 0));
+    if (
+        $nome === '' || strlen($nome) > 150 ||
+        !filter_var($email, FILTER_VALIDATE_EMAIL) ||
+        $telefono === '' || strlen($telefono) > 40 ||
+        !in_array($servizio, ['prima_visita', 'controllo'], true) ||
+        !$orario_valido
+    ) {
+        die("Dati prenotazione non validi. Torna indietro e riprova.");
+    }
+
+    $durata = ($servizio === 'prima_visita') ? 60 : 30;
+    $data_fine = (clone $data_inizio)->modify("+$durata minutes");
+    $giorno_settimana = (int)$data_inizio->format('N');
+    $ora_decimale = (int)$data_inizio->format('H') + ((int)$data_inizio->format('i') / 60);
+    $fine_decimale = $ora_decimale + ($durata / 60);
+    if (
+        $data_inizio < new DateTime('now') ||
+        $giorno_settimana === 7 ||
+        !(($ora_decimale >= 9 && $fine_decimale <= 13) || ($ora_decimale >= 14 && $fine_decimale <= 18)) ||
+        ((int)$data_inizio->format('i') % 30 !== 0)
+    ) {
+        die("Giorno o orario non disponibile. Torna indietro e scegli un altro slot.");
+    }
+
+    $data_it = $data_inizio->format('d/m/Y');
+    $data_inizio_db = $data_inizio->format('Y-m-d H:i:s');
+    $data_fine_db   = $data_fine->format('Y-m-d H:i:s');
 
     // Controllo sovrapposizioni
     $stmt_check = $conn->prepare(
