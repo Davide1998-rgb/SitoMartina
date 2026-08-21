@@ -1,9 +1,7 @@
 <?php
-session_start();
-// FIX: controllo completo (prima era solo isset senza === true)
-if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
-    header("Location: login.php"); exit;
-}
+require_once 'security.php';
+require_admin_login();
+require_csrf_token();
 require_once 'db_connect.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -18,7 +16,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($azione == 'elimina') {
         $stmt = $conn->prepare("DELETE FROM prenotazioni WHERE id = ?");
-        $stmt->bind_param("i", $id); $stmt->execute(); $stmt->close();
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $stmt->close();
     } elseif ($azione == 'salva') {
         $data = $_POST['nuova_data'] ?? '';
         $ora = $_POST['nuova_ora'] ?? '';
@@ -42,9 +42,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $data_fine_completa = (clone $data_inizio)->modify("+$durata minutes")->format('Y-m-d H:i:s');
         $stmt = $conn->prepare("UPDATE prenotazioni SET data_inizio = ?, data_fine = ?, status = ? WHERE id = ?");
         $stmt->bind_param("sssi", $data_inizio_completa, $data_fine_completa, $status, $id);
-        $stmt->execute(); $stmt->close();
+        $stmt->execute();
+        $stmt->close();
     }
 }
 $conn->close();
-header("Location: admin_calendario.php"); exit;
-?>
+header("Location: admin_calendario.php");
+exit;

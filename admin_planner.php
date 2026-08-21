@@ -1,13 +1,10 @@
 <?php
-session_start();
-if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
-    header("Location: login.php"); exit;
-}
+require_once 'security.php';
+require_admin_login();
 setlocale(LC_TIME, 'it_IT.utf8', 'ita');
 date_default_timezone_set('Europe/Rome');
 require_once 'db_connect.php';
 
-// FIX: navigazione settimane robusta con modify() — gestisce correttamente i cambi anno
 $week_offset = isset($_GET['w']) ? intval($_GET['w']) : 0;
 $data_corrente = new DateTime();
 $data_corrente->modify('monday this week');
@@ -36,6 +33,7 @@ function getAppuntamenti($conn, $date_string) {
 <!DOCTYPE html>
 <html lang="it">
 <head>
+    <link rel="icon" type="image/png" href="img/logo.svg">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Planner Admin</title>
@@ -46,7 +44,7 @@ function getAppuntamenti($conn, $date_string) {
         *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
         .modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:9999;justify-content:center;align-items:center;padding:20px;}
         .modal-box{background:white;padding:25px;border-radius:15px;width:100%;max-width:400px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,0.2);}
-        .modal-btn{display:block;width:100%;padding:15px;margin:10px 0;border:none;border-radius:8px;cursor:pointer;font-weight:bold;font-size:1rem;text-decoration:none;box-sizing:border-box;}
+        .modal-btn{display:block;width:100%;padding:15px;margin:10px 0;border:none;border-radius:8px;cursor:pointer;font-weight:bold;font-size:1rem;text-decoration:none;box-sizing:border-box;font-family:inherit;}
         .btn-yes-mail{background:#668073;color:white;} .btn-no-mail{background:#e0e0e0;color:#333;}
         .btn-reject{background:#fff0f0;color:#d9534f;border:1px solid #d9534f;}
         .btn-close{background:transparent;color:#999;margin-top:15px;font-size:0.9rem;text-decoration:underline;border:none;cursor:pointer;}
@@ -85,8 +83,8 @@ function getAppuntamenti($conn, $date_string) {
     <?php include 'admin_topbar.php'; ?>
     <div class="top-bar">
         <div class="header-title">
-            <h1><?php echo "$mese_txt $anno_txt"; ?></h1>
-            <p>Settimana: <?php echo $intervallo_txt; ?></p>
+            <h1><?php echo htmlspecialchars("$mese_txt $anno_txt", ENT_QUOTES, 'UTF-8'); ?></h1>
+            <p>Settimana: <?php echo htmlspecialchars($intervallo_txt, ENT_QUOTES, 'UTF-8'); ?></p>
         </div>
         <div class="nav-controls">
             <a href="?w=<?php echo $week_offset - 1; ?>" class="btn-nav"><i class='bx bx-chevron-left'></i></a>
@@ -122,13 +120,13 @@ function getAppuntamenti($conn, $date_string) {
                         $classe_status   = ($row['status'] == 'in_attesa') ? 'in_attesa' : '';
                     ?>
                         <div class="app-card <?php echo "$classe_servizio $classe_status"; ?>">
-                            <div class="card-time"><?php echo $ora; ?></div>
-                            <div class="card-name"><?php echo htmlspecialchars($row['nome']); ?></div>
-                            <div class="card-service"><?php echo str_replace('_', ' ', $row['servizio']); ?></div>
-                            <div class="card-tel"><a href="tel:<?php echo $row['telefono']; ?>"><i class='bx bxs-phone'></i> <?php echo $row['telefono']; ?></a></div>
+                            <div class="card-time"><?php echo htmlspecialchars($ora, ENT_QUOTES, 'UTF-8'); ?></div>
+                            <div class="card-name"><?php echo htmlspecialchars($row['nome'], ENT_QUOTES, 'UTF-8'); ?></div>
+                            <div class="card-service"><?php echo htmlspecialchars(str_replace('_', ' ', $row['servizio']), ENT_QUOTES, 'UTF-8'); ?></div>
+                            <div class="card-tel"><a href="tel:<?php echo htmlspecialchars($row['telefono'], ENT_QUOTES, 'UTF-8'); ?>"><i class='bx bxs-phone'></i> <?php echo htmlspecialchars($row['telefono'], ENT_QUOTES, 'UTF-8'); ?></a></div>
                             <?php if ($row['status'] == 'in_attesa'): ?>
                                 <span class="badge-attesa">DA CONFERMARE</span>
-                                <button onclick="apriGestione(<?php echo $row['id']; ?>, '<?php echo addslashes($row['nome']); ?>')" class="btn-gestisci">
+                                <button type="button" class="btn-gestisci btn-open-gestione" data-id="<?php echo (int)$row['id']; ?>" data-nome="<?php echo htmlspecialchars($row['nome'], ENT_QUOTES, 'UTF-8'); ?>">
                                     <i class='bx bx-cog'></i> Gestisci Richiesta
                                 </button>
                             <?php endif; ?>
@@ -147,23 +145,34 @@ function getAppuntamenti($conn, $date_string) {
         <div class="modal-box">
             <h3 style="color:#668073;margin-top:0;">Gestisci Prenotazione</h3>
             <p>Cosa vuoi fare con <strong id="pazienteNome">...</strong>?</p>
-            <a href="#" id="linkConMail" class="modal-btn btn-yes-mail">✅ Conferma e INVIA Email</a>
-            <a href="#" id="linkNoMail"  class="modal-btn btn-no-mail">💾 Conferma (Solo DB, No Email)</a>
-            <a href="#" id="linkRifiuta" class="modal-btn btn-reject">❌ Rifiuta Richiesta</a>
-            <button onclick="chiudiGestione()" class="btn-close">Annulla e chiudi</button>
+            <form method="POST" action="admin_gestisci.php" id="formGestione">
+                <?php echo csrf_field(); ?>
+                <input type="hidden" name="id" id="gestioneId" value="">
+                <button type="submit" name="azione" value="conferma_email" class="modal-btn btn-yes-mail">✅ Conferma e INVIA Email</button>
+                <button type="submit" name="azione" value="conferma_no_email" class="modal-btn btn-no-mail">💾 Conferma (Solo DB, No Email)</button>
+                <button type="submit" name="azione" value="rifiuta" class="modal-btn btn-reject" onclick="return confirm('Confermi di voler rifiutare la richiesta?');">❌ Rifiuta Richiesta</button>
+            </form>
+            <button type="button" onclick="chiudiGestione()" class="btn-close">Annulla e chiudi</button>
         </div>
     </div>
     <script>
+        document.querySelectorAll('.btn-open-gestione').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var id = this.getAttribute('data-id');
+                var nome = this.getAttribute('data-nome');
+                apriGestione(id, nome);
+            });
+        });
+
         function apriGestione(id, nome) {
             var modal = document.getElementById('gestioneModal');
             if (modal) {
                 modal.style.display = 'flex';
-                document.getElementById('pazienteNome').innerText = nome;
-                document.getElementById('linkConMail').href = "admin_gestisci.php?id=" + id + "&azione=conferma_email";
-                document.getElementById('linkNoMail').href  = "admin_gestisci.php?id=" + id + "&azione=conferma_no_email";
-                document.getElementById('linkRifiuta').href = "admin_gestisci.php?id=" + id + "&azione=rifiuta";
+                document.getElementById('pazienteNome').textContent = nome;
+                document.getElementById('gestioneId').value = id;
             }
         }
+
         function chiudiGestione() {
             var modal = document.getElementById('gestioneModal');
             if (modal) modal.style.display = 'none';

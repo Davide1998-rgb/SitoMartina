@@ -1,8 +1,21 @@
-# Protezione file sensibili
-<Files "config_mail.php">
-    Order Allow,Deny
-    Deny from all
-</Files>
+# Protezione file sensibili e configurazioni
+<FilesMatch "(config_mail\.php|db_connect\.php|security\.php|\.json|\.txt|\.log|\.sql|\.env|\.git)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order Allow,Deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
 
 # Impedisce di vedere la lista dei file nelle cartelle
 Options -Indexes
+
+# Security Headers
+<IfModule mod_headers.c>
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-Content-Type-Options "nosniff"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+    Header set X-XSS-Protection "1; mode=block"
+</IfModule>

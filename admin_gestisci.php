@@ -1,13 +1,8 @@
 <?php
 // FILE: admin_gestisci.php
 
-session_start();
-
-if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
-    // FIX: redirect invece di die(), coerente con tutti gli altri file admin
-    header("Location: login.php");
-    exit;
-}
+require_once 'security.php';
+require_admin_login();
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -17,16 +12,18 @@ require 'PHPMailer/SMTP.php';
 require_once 'config_mail.php';
 require_once 'db_connect.php';
 
-if (!isset($_GET['id']) || !isset($_GET['azione'])) {
+if ($_SERVER["REQUEST_METHOD"] !== "POST" || !isset($_POST['id']) || !isset($_POST['azione'])) {
     header("Location: admin_planner.php");
     exit;
 }
 
-$id    = intval($_GET['id']);
-$azione = $_GET['azione'];
+require_csrf_token();
+
+$id    = intval($_POST['id']);
+$azione = $_POST['azione'];
 
 // Validazione azione: solo valori previsti
-if (!in_array($azione, ['conferma_email', 'conferma_no_email', 'rifiuta'])) {
+if (!in_array($azione, ['conferma_email', 'conferma_no_email', 'rifiuta'], true)) {
     header("Location: admin_planner.php");
     exit;
 }
@@ -45,12 +42,13 @@ if ($res->num_rows === 0) {
 $row           = $res->fetch_assoc();
 $email_cliente = $row['email'];
 $nome          = $row['nome'];
+$nome_safe     = htmlspecialchars($nome, ENT_QUOTES, 'UTF-8');
 $data_human    = date("d/m/Y", strtotime($row['data_inizio']));
 $ora_human     = date("H:i",   strtotime($row['data_inizio']));
 $msg_esito     = "";
 
 // --- CASO 1: CONFERMA CON EMAIL ---
-if ($azione == 'conferma_email') {
+if ($azione === 'conferma_email') {
 
     $stmt2 = $conn->prepare("UPDATE prenotazioni SET status = 'confermata' WHERE id = ?");
     $stmt2->bind_param("i", $id);
@@ -76,33 +74,33 @@ if ($azione == 'conferma_email') {
         <div style='font-family:sans-serif; padding:20px; background:#FBF3E4;'>
             <div style='background:white; padding:30px; border-radius:10px; max-width:600px; margin:0 auto; border-top:4px solid #668073;'>
                 <h1 style='color:#668073;'>Confermato!</h1>
-                <p>Ciao $nome,</p>
+                <p>Ciao $nome_safe,</p>
                 <p>Il tuo appuntamento del <strong>$data_human</strong> alle ore <strong>$ora_human</strong> è confermato.</p>
                 <p>A presto,<br>Dott.ssa Violo</p>
             </div>
         </div>";
 
         $mail->send();
-        $msg_esito = "Prenotazione confermata e <strong>EMAIL INVIATA</strong> a $nome.";
+        $msg_esito = "Prenotazione confermata e <strong>EMAIL INVIATA</strong> a $nome_safe.";
     } catch (Exception $e) {
-        $msg_esito = "Prenotazione confermata, ma errore invio email: " . $mail->ErrorInfo;
+        $msg_esito = "Prenotazione confermata, ma errore invio email: " . htmlspecialchars($mail->ErrorInfo, ENT_QUOTES, 'UTF-8');
     }
 
 // --- CASO 2: CONFERMA SENZA EMAIL ---
-} elseif ($azione == 'conferma_no_email') {
+} elseif ($azione === 'conferma_no_email') {
     $stmt2 = $conn->prepare("UPDATE prenotazioni SET status = 'confermata' WHERE id = ?");
     $stmt2->bind_param("i", $id);
     $stmt2->execute();
     $stmt2->close();
-    $msg_esito = "Prenotazione confermata <strong>senza</strong> inviare email.";
+    $msg_esito = "Prenotazione confermata <strong>senza</strong> inviare email a $nome_safe.";
 
 // --- CASO 3: RIFIUTA ---
-} elseif ($azione == 'rifiuta') {
+} elseif ($azione === 'rifiuta') {
     $stmt2 = $conn->prepare("UPDATE prenotazioni SET status = 'rifiutata' WHERE id = ?");
     $stmt2->bind_param("i", $id);
     $stmt2->execute();
     $stmt2->close();
-    $msg_esito = "Prenotazione <strong>rifiutata</strong>. Il posto è tornato libero.";
+    $msg_esito = "Prenotazione di $nome_safe <strong>rifiutata</strong>. Il posto è tornato libero.";
 }
 
 $conn->close();
@@ -110,6 +108,7 @@ $conn->close();
 <!DOCTYPE html>
 <html lang="it">
 <head>
+    <link rel="icon" type="image/png" href="img/logo.svg">
     <meta charset="UTF-8">
     <title>Esito</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">

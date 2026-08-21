@@ -2,51 +2,57 @@
 // FILE: admin_manuale.php
 // Inserimento manuale di un appuntamento da parte dell'admin.
 
-session_start();
-
-if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
-    header("Location: login.php");
-    exit;
-}
-
+require_once 'security.php';
+require_admin_login();
 require_once 'db_connect.php';
 
 $messaggio = "";
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $nome     = $_POST['nome'];
-    $email    = $_POST['email'] ?? '';
-    $telefono = $_POST['telefono'];
-    $data     = $_POST['data'];  // YYYY-MM-DD
-    $ora      = $_POST['ora'];   // HH:MM
-    $servizio = $_POST['servizio'];
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    require_csrf_token();
 
-    $data_inizio = "$data $ora:00";
-    $durata      = ($servizio == 'prima_visita') ? 60 : 30;
-    $data_fine   = date('Y-m-d H:i:s', strtotime($data_inizio . " + $durata minutes"));
+    $nome     = trim($_POST['nome'] ?? '');
+    $email    = trim($_POST['email'] ?? '');
+    $telefono = trim($_POST['telefono'] ?? '');
+    $data     = trim($_POST['data'] ?? '');
+    $ora      = trim($_POST['ora'] ?? '');
+    $servizio = in_array($_POST['servizio'] ?? '', ['prima_visita', 'controllo'], true) ? $_POST['servizio'] : 'controllo';
 
-    // Prepared statement al posto di real_escape_string
-    $stmt = $conn->prepare(
-        "INSERT INTO prenotazioni (nome, email, telefono, servizio, data_inizio, data_fine, status)
-         VALUES (?, ?, ?, ?, ?, ?, 'confermata')"
-    );
-    $stmt->bind_param("ssssss", $nome, $email, $telefono, $servizio, $data_inizio, $data_fine);
+    $data_valida = DateTime::createFromFormat('!Y-m-d H:i', "$data $ora");
 
-    if ($stmt->execute()) {
-        $messaggio = "<div style='color:green; font-weight:bold; background:#e8f5e9; padding:10px; border-radius:5px; margin-bottom:15px;'>
-                        ✅ Appuntamento inserito con successo!
+    if ($nome === '' || strlen($nome) > 150 || $telefono === '' || !$data_valida) {
+        $messaggio = "<div style='color:red; background:#ffebee; padding:10px; border-radius:5px; margin-bottom:15px;'>
+                        Dati inseriti non validi. Controlla e riprova.
                       </div>";
     } else {
-        $messaggio = "<div style='color:red; background:#ffebee; padding:10px; border-radius:5px; margin-bottom:15px;'>
-                        Errore: " . $conn->error . "
-                      </div>";
+        $durata      = ($servizio === 'prima_visita') ? 60 : 30;
+        $data_inizio = $data_valida->format('Y-m-d H:i:s');
+        $data_fine   = (clone $data_valida)->modify("+$durata minutes")->format('Y-m-d H:i:s');
+
+        $stmt = $conn->prepare(
+            "INSERT INTO prenotazioni (nome, email, telefono, servizio, data_inizio, data_fine, status)
+             VALUES (?, ?, ?, ?, ?, ?, 'confermata')"
+        );
+        $stmt->bind_param("ssssss", $nome, $email, $telefono, $servizio, $data_inizio, $data_fine);
+
+        if ($stmt->execute()) {
+            $messaggio = "<div style='color:green; font-weight:bold; background:#e8f5e9; padding:10px; border-radius:5px; margin-bottom:15px;'>
+                            ✅ Appuntamento inserito con successo!
+                          </div>";
+        } else {
+            $messaggio = "<div style='color:red; background:#ffebee; padding:10px; border-radius:5px; margin-bottom:15px;'>
+                            Errore: " . htmlspecialchars($conn->error, ENT_QUOTES, 'UTF-8') . "
+                          </div>";
+        }
+        $stmt->close();
     }
-    $stmt->close();
 }
+$conn->close();
 ?>
 <!DOCTYPE html>
 <html lang="it">
 <head>
+    <link rel="icon" type="image/png" href="img/logo.svg">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inserimento Manuale</title>
@@ -70,6 +76,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <?php echo $messaggio; ?>
 
         <form method="POST">
+            <?php echo csrf_field(); ?>
             <label>Nome e Cognome</label>
             <input type="text" name="nome" required placeholder="Es. Mario Rossi">
 

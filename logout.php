@@ -1,6 +1,14 @@
 <?php
-session_start();
-session_destroy(); // FIX: rimossa session_unset() ridondante
+require_once 'security.php';
+start_secure_session();
+$_SESSION = [];
+if (ini_get("session.use_cookies")) {
+    $params = session_get_cookie_params();
+    setcookie(session_name(), '', time() - 42000,
+        $params["path"], $params["domain"],
+        $params["secure"], $params["httponly"]
+    );
+}
+session_destroy();
 header("Location: login.php");
 exit;
-?>

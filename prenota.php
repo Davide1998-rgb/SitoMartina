@@ -1,4 +1,5 @@
 <?php
+require_once 'security.php';
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 require 'PHPMailer/Exception.php';
@@ -6,10 +7,24 @@ require 'PHPMailer/PHPMailer.php';
 require 'PHPMailer/SMTP.php';
 require_once 'config_mail.php';
 require_once 'db_connect.php';
+require_once 'disponibilita.php';
 date_default_timezone_set('Europe/Rome');
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (!isset($_POST['privacy_consent'])) { die("Devi accettare la privacy."); }
+function redirect_booking_error(string $message): void {
+    $safeMessage = rawurlencode($message);
+    header('Location: index.html?error=' . $safeMessage . '#prenota', true, 302);
+    exit;
+}
+
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    // 1. Controllo Honeypot Anti-Bot
+    if (!empty($_POST['website_hp'])) {
+        redirect_booking_error('Richiesta non valida.');
+    }
+
+    if (!isset($_POST['privacy_consent'])) {
+        redirect_booking_error('Devi accettare la privacy.');
+    }
 
     $nome        = trim($_POST['nome'] ?? '');
     $email       = trim($_POST['email'] ?? '');
@@ -29,21 +44,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         !in_array($servizio, ['prima_visita', 'controllo'], true) ||
         !$orario_valido
     ) {
-        die("Dati prenotazione non validi. Torna indietro e riprova.");
+        redirect_booking_error('Dati prenotazione non validi. Torna indietro e riprova.');
     }
 
     $durata = ($servizio === 'prima_visita') ? 60 : 30;
     $data_fine = (clone $data_inizio)->modify("+$durata minutes");
     $giorno_settimana = (int)$data_inizio->format('N');
-    $ora_decimale = (int)$data_inizio->format('H') + ((int)$data_inizio->format('i') / 60);
-    $fine_decimale = $ora_decimale + ($durata / 60);
+    $minuti_inizio = ((int)$data_inizio->format('H') * 60) + (int)$data_inizio->format('i');
+    $minuti_fine = ((int)$data_fine->format('H') * 60) + (int)$data_fine->format('i');
+    $fine_fascia = match ($giorno_settimana) {
+        2 => 20 * 60,
+        3, 5 => 20 * 60,
+        6 => ($servizio === 'prima_visita') ? 13 * 60 : (13 * 60 + 30),
+        default => 0
+    };
+    $inizio_fascia = ($giorno_settimana === 2) ? 14 * 60 : 9 * 60;
+    $fine_fuori_orario = $giorno_settimana === 6 && $minuti_fine > $fine_fascia;
     if (
-        $data_inizio < new DateTime('now') ||
-        $giorno_settimana === 7 ||
-        !(($ora_decimale >= 9 && $fine_decimale <= 13) || ($ora_decimale >= 14 && $fine_decimale <= 18)) ||
+        $data_inizio->format('Y-m-d') <= (new DateTime('today'))->format('Y-m-d') ||
+        !in_array($giorno_settimana, [2, 3, 5, 6], true) ||
+        $minuti_inizio < $inizio_fascia || $fine_fuori_orario ||
         ((int)$data_inizio->format('i') % 30 !== 0)
     ) {
-        die("Giorno o orario non disponibile. Torna indietro e scegli un altro slot.");
+        redirect_booking_error('Giorno o orario non disponibile. Torna indietro e scegli un altro slot.');
+    }
+
+    if (disponibilita_fascia_bloccata($conn, $data_giorno, $ora_inizio, $data_fine->format('H:i'))) {
+        redirect_booking_error('Giorno o orario non disponibile. Torna indietro e scegli un altro slot.');
     }
 
     $data_it = $data_inizio->format('d/m/Y');
@@ -56,11 +83,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
          AND (status = 'confermata' OR status = 'in_attesa')"
     );
     $stmt_check->bind_param("ss", $data_fine_db, $data_inizio_db);
-    $stmt_check->execute(); $stmt_check->store_result();
+    $stmt_check->execute();
+    $stmt_check->store_result();
     if ($stmt_check->num_rows > 0) {
         $stmt_check->close();
-        echo "<script>alert('Spiacenti, orario appena occupato. Riprova.'); window.location.href='index.html';</script>";
-        exit;
+        redirect_booking_error('Spiacenti, l\'orario scelto è appena stato occupato. Riprova.');
     }
     $stmt_check->close();
 
@@ -72,30 +99,44 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt_ins->bind_param("ssssss", $nome, $email, $telefono, $servizio, $data_inizio_db, $data_fine_db);
 
     if ($stmt_ins->execute()) {
-        $id_prenotazione = $conn->insert_id; $stmt_ins->close();
+        $id_prenotazione = $conn->insert_id;
+        $stmt_ins->close();
+
         $tel_clean     = preg_replace('/[^0-9]/', '', $telefono);
         $link_wa       = "https://wa.me/39$tel_clean";
-        $link_conferma = BASE_URL . "/conferma.php?id=$id_prenotazione";
-        $link_rifiuta  = BASE_URL . "/rifiuta.php?id=$id_prenotazione";
+        
+        // Generazione link firmati con HMAC per conferma/rifiuto sicuri 1-click
+        $token_conferma = generate_action_token('conferma', $id_prenotazione);
+        $token_rifiuta  = generate_action_token('rifiuta', $id_prenotazione);
+        $link_conferma  = BASE_URL . "/conferma.php?id=$id_prenotazione&token=$token_conferma";
+        $link_rifiuta   = BASE_URL . "/rifiuta.php?id=$id_prenotazione&token=$token_rifiuta";
 
-        // EMAIL 1: alla dottoressa — FIX: era $email (paziente), ora è MAIL_USER
+        $nome_safe     = htmlspecialchars($nome, ENT_QUOTES, 'UTF-8');
+        $tel_safe      = htmlspecialchars($telefono, ENT_QUOTES, 'UTF-8');
+        $servizio_safe = htmlspecialchars(ucfirst(str_replace('_', ' ', $servizio)), ENT_QUOTES, 'UTF-8');
+
+        // EMAIL 1: alla dottoressa
         $mail = new PHPMailer(true);
         try {
-            $mail->isSMTP(); $mail->Host = MAIL_HOST; $mail->SMTPAuth = true;
-            $mail->Username = MAIL_USER; $mail->Password = MAIL_PASS;
+            $mail->isSMTP();
+            $mail->Host       = MAIL_HOST;
+            $mail->SMTPAuth   = true;
+            $mail->Username   = MAIL_USER;
+            $mail->Password   = MAIL_PASS;
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-            $mail->Port = MAIL_PORT; $mail->CharSet = 'UTF-8';
+            $mail->Port       = MAIL_PORT;
+            $mail->CharSet    = 'UTF-8';
             $mail->setFrom(MAIL_USER, MAIL_FROM_NAME);
-            $mail->addAddress(MAIL_USER); // ← alla dottoressa
+            $mail->addAddress(MAIL_USER);
             $mail->isHTML(true);
-            $mail->Subject = "🔔 Nuova Prenotazione: $nome";
+            $mail->Subject = "🔔 Nuova Prenotazione: $nome_safe";
             $mail->Body = "<div style='background:#FBF3E4;padding:20px;font-family:Arial,sans-serif;'>
 <div style='background:#FFF;padding:20px;border-radius:10px;border-left:5px solid #668073;'>
 <h2 style='color:#668073;'>Nuova Richiesta</h2>
-<p><strong>Paziente:</strong> $nome</p>
-<p><strong>Servizio:</strong> " . ucfirst(str_replace('_', ' ', $servizio)) . "</p>
+<p><strong>Paziente:</strong> $nome_safe</p>
+<p><strong>Servizio:</strong> $servizio_safe</p>
 <p><strong>Data:</strong> $data_it alle $ora_inizio</p>
-<p><strong>Tel:</strong> $telefono</p>
+<p><strong>Tel:</strong> $tel_safe</p>
 <hr style='border:0;border-top:1px solid #eee;margin:20px 0;'>
 <p>
   <a href='$link_conferma' style='color:#2e7d32;font-weight:bold;text-decoration:none;'>✅ CONFERMA</a> |
@@ -103,16 +144,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   <a href='$link_wa'       style='color:#25D366;font-weight:bold;text-decoration:none;'>💬 WHATSAPP</a>
 </p>
 </div></div>";
-            $mail->send(); $mail->smtpClose();
+            $mail->send();
+            $mail->smtpClose();
         } catch (Exception $e) { /* silenzioso */ }
 
         // EMAIL 2: al paziente
         $mail2 = new PHPMailer(true);
         try {
-            $mail2->isSMTP(); $mail2->Host = MAIL_HOST; $mail2->SMTPAuth = true;
-            $mail2->Username = MAIL_USER; $mail2->Password = MAIL_PASS;
+            $mail2->isSMTP();
+            $mail2->Host       = MAIL_HOST;
+            $mail2->SMTPAuth   = true;
+            $mail2->Username   = MAIL_USER;
+            $mail2->Password   = MAIL_PASS;
             $mail2->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-            $mail2->Port = MAIL_PORT; $mail2->CharSet = 'UTF-8';
+            $mail2->Port       = MAIL_PORT;
+            $mail2->CharSet    = 'UTF-8';
             $mail2->setFrom(MAIL_USER, MAIL_FROM_NAME);
             $mail2->addAddress($email);
             $mail2->isHTML(true);
@@ -120,7 +166,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $mail2->Body = "<div style='background:#FBF3E4;padding:40px;font-family:Arial,sans-serif;'>
 <div style='max-width:600px;margin:0 auto;background:#FFFFFF;border-radius:15px;padding:30px;'>
 <h1 style='color:#668073;'>Dott.ssa Martina Violo</h1>
-<h2 style='color:#1A2621;'>Grazie, $nome.</h2>
+<h2 style='color:#1A2621;'>Grazie, $nome_safe.</h2>
 <p style='color:#555;'>Ho ricevuto la tua richiesta.</p>
 <div style='background:#F8F9FA;border-left:4px solid #668073;padding:15px;margin:20px 0;'>
   <p><strong>📅 Data:</strong> $data_it</p>
@@ -132,10 +178,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $mail2->send();
         } catch (Exception $e) { /* silenzioso */ }
 
-        header("Location: conferma_richiesta.html"); exit;
+        header("Location: conferma_richiesta.html?conversione=1");
+        exit;
     } else {
-        echo "Errore Database: " . $conn->error;
+        echo "Errore Database: " . htmlspecialchars($conn->error, ENT_QUOTES, 'UTF-8');
     }
 }
 $conn->close();
-?>

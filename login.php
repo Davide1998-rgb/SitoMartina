@@ -1,39 +1,61 @@
 <?php
-session_start();
+require_once 'security.php';
+start_secure_session();
 
-// CONNESSIONE (Porta 3307)
+if (isset($_SESSION['admin_logged']) && $_SESSION['admin_logged'] === true) {
+    header("Location: dashboard.php");
+    exit;
+}
+
 require_once 'db_connect.php';
 if ($conn->connect_error) { die("Errore connessione DB"); }
 
 $error = "";
+$rateLimitStatus = check_login_rate_limit();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $password_inserita = $_POST['password'];
-
-    // Preleviamo l'unica password presente nella tabella (quella dell'admin)
-    $sql = "SELECT password FROM admin_users LIMIT 1";
-    $result = $conn->query($sql);
-
-    if ($result->num_rows > 0) {
-        $row = $result->fetch_assoc();
-        $hash_salvato = $row['password'];
-
-        // VERIFICA SICURA: Confronta la password scritta con l'hash nel DB
-        if (password_verify($password_inserita, $hash_salvato)) {
-            $_SESSION['admin_logged'] = true;
-            header("Location: dashboard.php");
-            exit;
-        } else {
-            $error = "Password errata.";
-        }
+    if (!$rateLimitStatus['allowed']) {
+        $error = $rateLimitStatus['message'];
+    } elseif (!verify_csrf_token()) {
+        $error = "Sessione scaduta. Ricarica la pagina e riprova.";
     } else {
-        $error = "Nessuna password impostata nel sistema.";
+        $password_inserita = $_POST['password'] ?? '';
+
+        $stmt = $conn->prepare("SELECT password FROM admin_users LIMIT 1");
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result && $result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            $hash_salvato = $row['password'];
+
+            if (password_verify($password_inserita, $hash_salvato)) {
+                reset_login_attempts();
+                session_regenerate_id(true);
+                $_SESSION['admin_logged'] = true;
+                $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+                $stmt->close();
+                $conn->close();
+                header("Location: dashboard.php");
+                exit;
+            } else {
+                record_failed_login();
+                usleep(400000); // Ritardo anti-brute-force
+                $rateCheckAfter = check_login_rate_limit();
+                $error = $rateCheckAfter['allowed'] ? "Password errata." : $rateCheckAfter['message'];
+            }
+        } else {
+            $error = "Nessuna password impostata nel sistema.";
+        }
+        $stmt->close();
     }
 }
+$conn->close();
 ?>
 <!DOCTYPE html>
 <html lang="it">
 <head>
+    <link rel="icon" type="image/png" href="img/logo.svg">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Dott.ssa Violo</title>
@@ -68,7 +90,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             border-radius: 8px;
             box-sizing: border-box;
             font-family: 'Montserrat', sans-serif;
-            text-align: center; /* Testo centrato per eleganza */
+            text-align: center;
         }
     </style>
 </head>
@@ -77,9 +99,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <h2 style="color:#668073;">Bentornata</h2>
         <p style="font-size:0.9rem; color:#666;">Inserisci la password per accedere.</p>
         
-        <?php if($error) echo "<p style='color:red; font-weight:bold; background:#ffe6e6; padding:10px; border-radius:5px;'>$error</p>"; ?>
+        <?php if($error): ?>
+            <p style='color:red; font-weight:bold; background:#ffe6e6; padding:10px; border-radius:5px;'><?php echo htmlspecialchars($error, ENT_QUOTES, 'UTF-8'); ?></p>
+        <?php endif; ?>
         
         <form method="POST">
+            <?php echo csrf_field(); ?>
             <input type="password" name="password" placeholder="••••••••" required autofocus>
             <button type="submit" class="btn" style="width:100%;">Accedi</button>
         </form>

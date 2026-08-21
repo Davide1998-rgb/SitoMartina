@@ -1,5 +1,7 @@
 <?php
 require_once 'db_connect.php';
+require_once 'disponibilita.php';
+date_default_timezone_set('Europe/Rome');
 
 // Disabilita la visualizzazione degli errori HTML per evitare di rompere il formato JSON
 ini_set('display_errors', 0);
@@ -9,29 +11,47 @@ $input          = json_decode(file_get_contents('php://input'), true);
 $data_scelta    = isset($input['data'])   ? trim($input['data'])     : '';
 $durata_minuti  = isset($input['durata']) ? intval($input['durata']) : 30;
 
-if (empty($data_scelta) || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $data_scelta)) {
+$data_validata = DateTime::createFromFormat('!Y-m-d', $data_scelta);
+$errori_data = DateTime::getLastErrors();
+$data_valida = $data_validata &&
+    ($errori_data === false || ($errori_data['warning_count'] === 0 && $errori_data['error_count'] === 0));
+
+if (!$data_valida || !in_array($durata_minuti, [30, 60], true)) {
     header('Content-Type: application/json');
     echo json_encode(["consigliati" => [], "altri" => []]);
     exit;
 }
 
-$oggi        = date('Y-m-d');
-$ora_attuale = date('H:i');
+$oggi = date('Y-m-d');
 
 $orari_possibili = [];
 
 function generaSlot($inizio, $fine, $durata, &$array_target) {
     $start = strtotime($inizio);
     $end   = strtotime($fine);
-    while ($start + ($durata * 60) <= $end) {
+    while ($start <= $end) {
         $array_target[] = date("H:i", $start);
         $start += (30 * 60); // Step di 30 minuti
     }
 }
 
-// Fasce orarie dello studio
-generaSlot("09:00", "13:00", $durata_minuti, $orari_possibili);
-generaSlot("14:00", "18:00", $durata_minuti, $orari_possibili);
+$giorno_settimana = (int)date('N', strtotime($data_scelta));
+
+// Il giorno stesso e i giorni di chiusura non sono prenotabili.
+if ($data_scelta <= $oggi || !in_array($giorno_settimana, [2, 3, 5, 6], true)) {
+    header('Content-Type: application/json');
+    echo json_encode(["consigliati" => [], "altri" => []]);
+    exit;
+}
+
+// Fasce orarie dello studio, variabili in base al giorno e al servizio.
+if ($giorno_settimana === 2) {
+    generaSlot("14:00", "20:00", $durata_minuti, $orari_possibili);
+} elseif ($giorno_settimana === 6) {
+    generaSlot("09:00", $durata_minuti === 60 ? "13:00" : "13:30", $durata_minuti, $orari_possibili);
+} else {
+    generaSlot("09:00", "20:00", $durata_minuti, $orari_possibili);
+}
 
 // 1. Recupero prenotazioni esistenti dal database
 $prenotazioni_esistenti = [];
@@ -57,9 +77,8 @@ foreach ($orari_possibili as $slot) {
     $slot_end    = $slot_start + ($durata_minuti * 60);
     $sovrapposto = false;
 
-    // Se la data è oggi, escludi orari già passati o imminenti
-    if ($data_scelta == $oggi && $slot_start <= strtotime('+1 hour', strtotime($data_scelta . ' ' . $ora_attuale))) {
-        $sovrapposto = true;
+    if (disponibilita_fascia_bloccata($conn, $data_scelta, $slot, date('H:i', $slot_end))) {
+        continue;
     }
 
     if (!$sovrapposto) {

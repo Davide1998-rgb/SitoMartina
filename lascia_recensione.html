@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
+    <link rel="icon" type="image/png" href="img/logo.svg">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Lascia una Recensione - Dott.ssa Violo</title>
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
@@ -64,7 +65,7 @@
         <p>Grazie per esserti affidata a me.<br>Racconta la tua esperienza.</p>
         
         <form action="salva_recensione_pubblica.php" method="POST">
-            
+            <input type="text" name="website_hp" style="display:none !important;" tabindex="-1" autocomplete="off">
             <input type="text" name="nome" required placeholder="Il tuo Nome (es. Laura R.)">
             
             <label style="display:block; margin-top:20px; font-weight:bold; color:#1A2621;">Dai un voto alla tua esperienza:</label>

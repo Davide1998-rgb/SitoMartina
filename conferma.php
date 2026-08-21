@@ -1,9 +1,6 @@
 <?php
-session_start();
-if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
-    header("Location: login.php");
-    exit;
-}
+require_once 'security.php';
+start_secure_session();
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -13,21 +10,33 @@ require 'PHPMailer/SMTP.php';
 require_once 'config_mail.php';
 require_once 'db_connect.php';
 
-if (isset($_GET['id'])) {
-    $id = intval($_GET['id']);
+$id    = isset($_GET['id']) ? intval($_GET['id']) : 0;
+$token = $_GET['token'] ?? '';
 
+$is_logged = isset($_SESSION['admin_logged']) && $_SESSION['admin_logged'] === true;
+$is_valid_token = ($id > 0 && verify_action_token('conferma', $id, $token));
+
+if (!$is_logged && !$is_valid_token) {
+    header("Location: login.php");
+    exit;
+}
+
+if ($id > 0) {
     $stmt = $conn->prepare("SELECT * FROM prenotazioni WHERE id = ?");
     $stmt->bind_param("i", $id);
     $stmt->execute();
     $result = $stmt->get_result();
     $stmt->close();
 
-    if ($result->num_rows > 0) {
+    if ($result && $result->num_rows > 0) {
         $row           = $result->fetch_assoc();
         $nome          = $row['nome'];
+        $nome_safe     = htmlspecialchars($nome, ENT_QUOTES, 'UTF-8');
         $email_cliente = $row['email'];
         $data_human    = date("d/m/Y", strtotime($row['data_inizio']));
         $ora_human     = date("H:i",   strtotime($row['data_inizio']));
+        $token_annulla = generate_action_token('annulla_cliente', $id);
+        $link_annulla  = BASE_URL . "/annulla_cliente.php?id=$id&token=$token_annulla";
 
         $stmt2 = $conn->prepare("UPDATE prenotazioni SET status = 'confermata' WHERE id = ?");
         $stmt2->bind_param("i", $id);
@@ -35,7 +44,6 @@ if (isset($_GET['id'])) {
         if ($stmt2->execute()) {
             $stmt2->close();
 
-            // FIX: istanza singola di PHPMailer (era duplicata)
             $mail = new PHPMailer(true);
             try {
                 $mail->isSMTP();
@@ -62,28 +70,31 @@ if (isset($_GET['id'])) {
     <hr style='border:0;border-top:1px solid #dcdcdc;margin:10px 0;'>
     <p style='color:#1A2621;'><strong>📅 Quando:</strong> $data_human</p>
     <p style='color:#1A2621;'><strong>🕒 Ora:</strong> $ora_human</p>
-    <p style='color:#1A2621;'><strong>📍 Dove:</strong> Piazza Enrico Risi 23, Sant'Elia</p>
+        <p style='color:#1A2621;'><strong>📍 Dove:</strong> Corso della Repubblica, 5 - Cassino</p>
   </div>
   <p style='color:#555;font-size:0.95rem;'>Se devi disdire, avvisami con almeno 24h di anticipo.</p>
-  <a href='https://wa.me/393472796818' style='display:inline-block;background:#668073;color:white;text-decoration:none;padding:12px 25px;border-radius:50px;font-weight:bold;margin-top:20px;'>Contattami su WhatsApp</a>
+        <a href='$link_annulla' style='display:inline-block;color:#b23b3b;text-decoration:underline;margin-top:10px;'>Annulla appuntamento</a><br>
+    <a href='https://wa.me/393331909733' style='display:inline-block;background:#668073;color:white;text-decoration:none;padding:12px 25px;border-radius:50px;font-weight:bold;margin-top:20px;'>Contattami su WhatsApp</a>
 </div>
 </div>";
 
                 $mail->send();
                 echo "<div style='font-family:sans-serif;text-align:center;padding:50px;background:#e8f5e9;'>
                         <h1 style='color:#2e7d32;'>Prenotazione Confermata!</h1>
-                        <p>Email inviata a <strong>$nome</strong>.</p>
-                        <a href='admin_planner.php' style='color:#668073;font-weight:bold;'>Torna al Planner</a>
+                        <p>Email inviata a <strong>$nome_safe</strong>.</p>
+                        <a href='admin_planner.php' style='color:#668073;font-weight:bold;'>Vai al Planner</a>
                       </div>";
             } catch (Exception $e) {
-                echo "<p>Prenotazione salvata, errore email: " . $mail->ErrorInfo . "</p>
-                      <a href='admin_planner.php'>Torna al Planner</a>";
+                echo "<div style='font-family:sans-serif;text-align:center;padding:50px;'>
+                        <p>Prenotazione salvata, errore email: " . htmlspecialchars($mail->ErrorInfo, ENT_QUOTES, 'UTF-8') . "</p>
+                        <a href='admin_planner.php'>Vai al Planner</a>
+                      </div>";
             }
         } else {
-            echo "Errore DB: " . $conn->error;
+            echo "Errore DB: " . htmlspecialchars($conn->error, ENT_QUOTES, 'UTF-8');
         }
     } else {
-        echo "Prenotazione non trovata.";
+        echo "<div style='font-family:sans-serif;text-align:center;padding:50px;'>Prenotazione non trovata.</div>";
     }
 }
 $conn->close();

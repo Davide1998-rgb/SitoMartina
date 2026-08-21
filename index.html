@@ -4,15 +4,16 @@
 <title>Dott.ssa Martina Violo | Nutrizionista a Cassino</title>
 <meta name="description" content="Biologa nutrizionista a Cassino: percorsi personalizzati per dimagrimento, benessere intestinale, PCOS, gravidanza e sport. Prenota la tua prima visita.">
 <meta name="robots" content="index,follow">
-<meta name="canonical" content="https://www.tuosito.it/">
+<link rel="canonical" href="/">
+<meta name="theme-color" content="#668073">
 <meta property="og:title" content="Dott.ssa Martina Violo | Nutrizionista a Cassino">
 <meta property="og:description" content="Percorsi nutrizionali personalizzati, scientifici e sostenibili per ritrovare equilibrio, salute e benessere a Cassino.">
 <meta property="og:type" content="website">
-<meta property="og:image" content="https://www.tuosito.it/img/anteprima-social.jpg">
-<meta property="og:url" content="https://www.tuosito.it/">
+<meta property="og:image" content="/img/anteprima-social.jpg">
+<meta property="og:url" content="/">
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" type="image/png" href="img/favicon.png">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<link rel="icon" type="image/png" href="img/logo.svg">
 <link rel="stylesheet" href="style.css">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Pinyon+Script&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=block" rel="stylesheet">
 <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
@@ -21,13 +22,24 @@
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "Physician",
+    "@type": ["Physician", "LocalBusiness"],
   "name": "Dott.ssa Martina Violo",
-  "image": "https://www.tuosito.it/img/martina.jpeg",
-  "@id": "https://www.tuosito.it",
-  "url": "https://www.tuosito.it",
+    "image": "/img/martina.jpeg",
+    "@id": "/",
+    "url": "/",
   "telephone": "3331909773",
   "medicalSpecialty": "DietNutrition",
+    "openingHoursSpecification": [
+        {"@type":"OpeningHoursSpecification","dayOfWeek":"Tuesday","opens":"14:00","closes":"20:00"},
+        {"@type":"OpeningHoursSpecification","dayOfWeek":["Wednesday","Friday"],"opens":"09:00","closes":"20:00"},
+        {"@type":"OpeningHoursSpecification","dayOfWeek":"Saturday","opens":"09:00","closes":"14:00"}
+    ],
+    "geo": {"@type":"GeoCoordinates","latitude":41.4919535,"longitude":13.8232103},
+    "sameAs": [
+        "https://www.instagram.com/nutrizionista_martinaviolo/",
+        "https://www.facebook.com/p/Nutrizionista-Martina-Violo-61586124436601/",
+        "https://it.linkedin.com/in/martina-violo-781714326"
+    ],
   "address": {
     "@type": "PostalAddress",
     "streetAddress": "Corso della Repubblica, 5",
@@ -150,7 +162,7 @@
 <header>
     <div class="container">
         <a href="index.html" class="logo-link">
-            <img src="img/logo.png" alt="Logo" class="logo-img">
+            <img src="img/logo.svg" alt="Logo" class="logo-img">
             <div class="brand-text">
                 <span class="dott-title">Dott.ssa</span>
                 <span class="brand-name">Martina Violo</span>
@@ -469,13 +481,13 @@
         <h2 data-aos="fade-up">Prenota un Appuntamento</h2>
 
         <div id="booking-choice" class="booking-choice-container" data-aos="zoom-in">
-            <div class="choice-card" onclick="mostraFormOnline()">
+            <button type="button" class="choice-card" onclick="mostraFormOnline()">
                 <div class="icon-circle"><i class='bx bx-calendar'></i></div>
                 <h3>Prenotazione Online</h3>
                 <p>Visualizza il calendario e blocca subito il tuo posto.</p>
                 <span class="btn-fake">Prenota qui &rarr;</span>
-            </div>
-            <a href="https://wa.me/393472796818?text=Salve,%20vorrei%20prenotare%20un%20appuntamento." target="_blank" class="choice-card whatsapp-card">
+            </button>
+            <a href="https://wa.me/393331909733?text=Salve,%20vorrei%20prenotare%20un%20appuntamento." target="_blank" class="choice-card whatsapp-card">
                 <div class="icon-circle wa"><i class='bx bxl-whatsapp'></i></div>
                 <h3>Via WhatsApp</h3>
                 <p>Scrivimi per concordare insieme orario e dettagli.</p>
@@ -488,19 +500,25 @@
                 &larr; Torna alla scelta
             </button>
             <div class="wizard-container">
+                <ol class="wizard-progress" aria-label="Avanzamento prenotazione">
+                    <li class="active" data-step="1">Servizio</li>
+                    <li data-step="2">Giorno</li>
+                    <li data-step="3">Orario</li>
+                    <li data-step="4">Dati</li>
+                </ol>
                 <div id="step-1" class="step-box active">
                     <h2>Di cosa hai bisogno?</h2>
                     <div class="scelta-servizio">
-                        <div onclick="scegliServizio('prima_visita', 60)" class="btn-card">
+                        <button type="button" onclick="scegliServizio('prima_visita', 60)" class="btn-card">
                             <div class="icon-box"><i class='bx bx-user-plus'></i></div>
                             <h3>Prima Visita</h3>
                             <p>60 Minuti</p>
-                        </div>
-                        <div onclick="scegliServizio('controllo', 30)" class="btn-card">
+                        </button>
+                        <button type="button" onclick="scegliServizio('controllo', 30)" class="btn-card">
                             <div class="icon-box"><i class='bx bx-refresh'></i></div>
                             <h3>Controllo</h3>
                             <p>30 Minuti</p>
-                        </div>
+                        </button>
                     </div>
                 </div>
 
@@ -523,6 +541,7 @@
                 <div id="step-3" class="step-box">
                     <h2>Orari Ottimizzati</h2>
                     <p style="font-size:0.9rem; color:#666; margin-bottom:15px;">Questi sono gli orari consigliati per te.</p>
+                    <div id="booking-status" class="booking-status" role="alert" aria-live="polite" hidden></div>
                     <div id="container-consigliati" class="orari-grid"></div>
                     <p id="no-consigliati" style="display:none; font-size:0.85rem; color:#999; margin-top:10px;">Nessun orario consigliato. Prova "Mostra tutti gli orari" qui sotto.</p>
                     <div class="divider" style="margin:20px 0; border-top:1px dashed #ccc;"></div>
@@ -540,6 +559,7 @@
 
                 <div id="step-5" class="step-box">
                     <h2>Conferma Prenotazione</h2>
+                    <div id="booking-error" class="booking-status is-error" role="alert" hidden></div>
                     <div class="riepilogo-box">
                         <p><i class='bx bx-id-card'></i> <strong id="riepilogo-servizio">...</strong></p>
                         <p><i class='bx bx-calendar'></i> <strong id="riepilogo-data">...</strong></p>
@@ -549,6 +569,7 @@
                         <input type="hidden" name="servizio" id="input-servizio">
                         <input type="hidden" name="data" id="input-data">
                         <input type="hidden" name="ora" id="input-ora">
+                        <input type="text" name="website_hp" style="display:none !important;" tabindex="-1" autocomplete="off">
                         <div class="input-group">
                             <input type="text" name="nome" required placeholder="Nome e Cognome">
                             <input type="tel" name="telefono" required placeholder="Telefono">
@@ -577,7 +598,7 @@
             <div class="contact-info">
                 <h3>Studio Dott.ssa Martina Violo</h3>
                 <p><strong>Indirizzo:</strong><br>Corso della Repubblica, 5<br>03043 Cassino (FR)</p>
-                <p><strong>Orari:</strong><br>Martedì e Giovedì: 09:00 - 19:00<br>Sabato: 14:00 - 19:00<br>Dom: Chiuso</p>
+                <p><strong>Orari:</strong><br>Martedì: 14:00 - 20:00<br>Mercoledì e Venerdì: 09:00 - 20:00<br>Sabato: 09:00 - 14:00<br></p>
                 <p><strong>Email:</strong><br><a href="mailto:info@martina.it">info@martina.it</a></p>
             </div>
             <div class="map-container">
@@ -588,8 +609,9 @@
                         <button onclick="riapriCookieBanner()" class="btn-outline" style="font-size:0.8rem; padding:0.5rem 1rem !important; min-height:auto !important;">Modifica Preferenze Cookie</button>
                     </div>
                 </div>
-                <iframe id="google-map"
-                   src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2988.5685082352406!2d13.823210311644386!3d41.491953471167015!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x133abc0966335143%3A0x8628ae13996856a4!2sC.so%20della%20Repubblica%2C%205%2C%2003043%20Cassino%20FR!5e0!3m2!1sit!2sit!4v1787132734799!5m2!1sit!2sit" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin">
+                     <iframe id="google-map"
+                         data-src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2988.5685082352406!2d13.823210311644386!3d41.491953471167015!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x133abc0966335143%3A0x8628ae13996856a4!2sC.so%20della%20Repubblica%2C%205%2C%2003043%20Cassino%20FR!5e0!3m2!1sit!2sit!4v1787132734799!5m2!1sit!2sit"
+                         title="Mappa dello studio della Dott.ssa Martina Violo" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin">
 
                    </iframe>
             </div>
@@ -601,12 +623,12 @@
     <div class="container">
         <div class="footer-content">
             <p>&copy; <span id="current-year"></span> Dott.ssa Martina Violo - Biologa Nutrizionista</p>
-            <p class="p-iva">P.IVA: 00000000000</p>
-            <p class="albo-text">Iscritta all'Ordine dei Biologi del Lazio e Abruzzo (Sez. A) <br>n. AA_000000</p>
+            <p class="p-iva">P.IVA: 0330292062</p>
+            <p class="albo-text">Iscritta all'Ordine dei Biologi del Lazio e Abruzzo (Sez. A) <br>n. AA_101139</p>
             <div class="social-icons">
-                <a href="https://www.instagram.com/iltuoprofilo" target="_blank" title="Instagram"><i class='bx bxl-instagram'></i></a>
-                <a href="https://www.facebook.com/iltuoprofilo" target="_blank" title="Facebook"><i class='bx bxl-facebook'></i></a>
-                <a href="https://www.linkedin.com/in/iltuoprofilo" target="_blank" title="LinkedIn"><i class='bx bxl-linkedin'></i></a>
+                <a href="https://www.instagram.com/nutrizionista_martinaviolo/" target="_blank" rel="noopener noreferrer" title="Instagram"><i class='bx bxl-instagram'></i></a>
+                <a href="https://www.facebook.com/p/Nutrizionista-Martina-Violo-61586124436601/" target="_blank" rel="noopener noreferrer" title="Facebook"><i class='bx bxl-facebook'></i></a>
+                <a href="https://it.linkedin.com/in/martina-violo-781714326" target="_blank" rel="noopener noreferrer" title="LinkedIn"><i class='bx bxl-linkedin'></i></a>
             </div>
             <ul class="footer-links">
                 <li><a href="privacy.html">Privacy Policy</a> &bull; <a href="privacy.html#cookie-policy">Cookie Policy</a></li>
@@ -615,12 +637,12 @@
     </div>
 </footer>
 
-<a href="https://wa.me/393472796818" class="whatsapp-float" target="_blank">
+<a href="https://wa.me/393331909733" class="whatsapp-float" target="_blank">
     <i class='bx bxl-whatsapp'></i>
     <span class="whatsapp-msg">Scrivimi su WhatsApp</span>
 </a>
 <div class="mobile-sticky-bar">
-    <a href="https://wa.me/393472796818" class="btn-sticky-whatsapp"><i class='bx bxl-whatsapp'></i> WhatsApp</a>
+    <a href="https://wa.me/393331909733" class="btn-sticky-whatsapp"><i class='bx bxl-whatsapp'></i> WhatsApp</a>
     <a href="#prenota" class="btn-sticky-book">📅 Prenota Ora</a>
 </div>
 
@@ -659,7 +681,7 @@ document.addEventListener("DOMContentLoaded", function() {
     function gestisciMappa(attiva){
         const iframe=document.getElementById("google-map");
         const placeholder=document.getElementById("map-placeholder");
-        if(attiva&&iframe){ if(!iframe.src) iframe.src=iframe.getAttribute("data-src"); iframe.style.display="block"; if(placeholder) placeholder.style.display="none"; }
+        if(attiva&&iframe){ if(!iframe.getAttribute('src')) iframe.setAttribute('src', iframe.getAttribute('data-src')); iframe.style.display="block"; if(placeholder) placeholder.style.display="none"; }
         else { if(iframe) iframe.style.display="none"; if(placeholder) placeholder.style.display="flex"; }
     }
 
@@ -696,6 +718,20 @@ document.addEventListener('visibilitychange',function(){
     }
 });
 
+// Messaggi di errore nel wizard
+const bookingError = document.getElementById('booking-error');
+const params = new URLSearchParams(window.location.search);
+const errorText = params.get('error');
+if (errorText && bookingError) {
+    bookingError.textContent = decodeURIComponent(errorText.replace(/\+/g, ' '));
+    bookingError.hidden = false;
+    const formContainer = document.getElementById('online-form-container');
+    const choiceContainer = document.getElementById('booking-choice');
+    if (formContainer) formContainer.style.display = 'block';
+    if (choiceContainer) choiceContainer.style.display = 'none';
+    mostraStep('step-1');
+}
+
 // Wizard prenotazioni
 let datiPrenotazione={ servizio:'', durata:0, data:'', dataVisual:'', ora:'' };
 let dataCorrenteCal=new Date();
@@ -703,7 +739,16 @@ let dataCorrenteCal=new Date();
 function mostraStep(stepId){
     document.querySelectorAll('.step-box').forEach(el=>el.classList.remove('active'));
     const step=document.getElementById(stepId);
-    if(step){ step.classList.add('active'); step.scrollIntoView({behavior:'smooth',block:'start'}); }
+    if(step){
+        step.classList.add('active');
+        const progressStep = step.id === 'step-5' ? 4 : Number(step.id.replace('step-', ''));
+        document.querySelectorAll('.wizard-progress li').forEach(item=>{
+            const itemStep = Number(item.dataset.step);
+            item.classList.toggle('active', itemStep === progressStep);
+            item.classList.toggle('completed', itemStep < progressStep);
+        });
+        step.scrollIntoView({behavior:'smooth',block:'start'});
+    }
     if(stepId==='step-2') renderCalendario();
 }
 function tornaAlStep(n){ mostraStep('step-'+n); }
@@ -758,6 +803,8 @@ function caricaOrariReali(){
     const containerConsigliati=document.getElementById('container-consigliati');
     const containerAltri=document.getElementById('container-altri');
     const msgNoConsigliati=document.getElementById('no-consigliati');
+    const status=document.getElementById('booking-status');
+    if(status){ status.hidden=true; status.textContent=''; status.className='booking-status'; }
     containerConsigliati.innerHTML='<div style="font-size:0.9rem;color:#666;">Controllo disponibilità...</div>';
     containerAltri.innerHTML='';
     if(msgNoConsigliati) msgNoConsigliati.style.display='none';
@@ -768,9 +815,15 @@ function caricaOrariReali(){
             if(data.consigliati&&data.consigliati.length>0){ data.consigliati.forEach(ora=>creaBottoneOrario(ora,containerConsigliati,true)); }
             else { if(msgNoConsigliati) msgNoConsigliati.style.display='block'; }
             if(data.altri&&data.altri.length>0){ data.altri.forEach(ora=>creaBottoneOrario(ora,containerAltri,false)); }
-            else if(!data.consigliati||data.consigliati.length===0){ containerAltri.innerHTML='<p style="font-size:0.8rem;">Nessun orario disponibile.</p>'; }
+            else if(!data.consigliati||data.consigliati.length===0){
+                containerAltri.innerHTML='<p style="font-size:0.8rem;">Nessun orario disponibile.</p>';
+                if(status){ status.hidden=false; status.textContent='Non ci sono orari disponibili per questa giornata. Prova un altro giorno.'; status.classList.add('is-info'); }
+            }
         })
-        .catch(err=>{ containerConsigliati.innerHTML='<p style="color:red;font-size:0.8rem;">Errore caricamento.</p>'; });
+        .catch(err=>{
+            containerConsigliati.innerHTML='';
+            if(status){ status.hidden=false; status.textContent='Non riesco a verificare gli orari. Controlla la connessione e riprova.'; status.classList.add('is-error'); }
+        });
 }
 
 function creaBottoneOrario(ora,container,isConsigliato){

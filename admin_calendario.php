@@ -1,47 +1,44 @@
 <?php
-session_start();
-if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
-    header("Location: login.php");
-    exit;
-}
+require_once 'security.php';
+require_admin_login();
 require_once 'db_connect.php';
 
 // CONFIGURAZIONE
 setlocale(LC_TIME, 'it_IT.utf8', 'ita');
 date_default_timezone_set('Europe/Rome');
 
-
 // LOGICA NAVIGAZIONE MESE
-$mese = isset($_GET['m']) ? intval($_GET['m']) : date('n');
-$anno = isset($_GET['a']) ? intval($_GET['a']) : date('Y');
+$mese = isset($_GET['m']) ? intval($_GET['m']) : (int)date('n');
+$anno = isset($_GET['a']) ? intval($_GET['a']) : (int)date('Y');
 
 if ($mese < 1) { $mese = 12; $anno--; }
 if ($mese > 12) { $mese = 1; $anno++; }
 
 $giorni_nel_mese = cal_days_in_month(CAL_GREGORIAN, $mese, $anno);
-$primo_giorno_timestamp = strtotime("$anno-$mese-01");
-$indice_primo_giorno = date('w', $primo_giorno_timestamp); 
+$primo_giorno_timestamp = strtotime(sprintf("%04d-%02d-01", $anno, $mese));
+$indice_primo_giorno = (int)date('w', $primo_giorno_timestamp); 
 $indice_primo_giorno = ($indice_primo_giorno == 0) ? 6 : $indice_primo_giorno - 1;
 
 $nomi_mesi = ["", "Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
-$titolo_mese = $nomi_mesi[$mese] . " " . $anno;
+$titolo_mese = ($nomi_mesi[$mese] ?? '') . " " . $anno;
 
-// SCARICHIAMO APPUNTAMENTI
-$sql = "SELECT * FROM prenotazioni 
-        WHERE MONTH(data_inizio) = $mese AND YEAR(data_inizio) = $anno 
-        ORDER BY data_inizio ASC";
-$res = $conn->query($sql);
+// SCARICHIAMO APPUNTAMENTI CON PREPARED STATEMENT
+$stmt_mese = $conn->prepare("SELECT * FROM prenotazioni WHERE MONTH(data_inizio) = ? AND YEAR(data_inizio) = ? ORDER BY data_inizio ASC");
+$stmt_mese->bind_param("ii", $mese, $anno);
+$stmt_mese->execute();
+$res = $stmt_mese->get_result();
 
 $appuntamenti_per_giorno = [];
-while($row = $res->fetch_assoc()) {
+while ($row = $res->fetch_assoc()) {
     $g = intval(date('d', strtotime($row['data_inizio'])));
     $appuntamenti_per_giorno[$g][] = $row;
 }
+$stmt_mese->close();
 ?>
-
 <!DOCTYPE html>
 <html lang="it">
 <head>
+    <link rel="icon" type="image/png" href="img/logo.svg">
     <meta charset="UTF-8">
     <title>Calendario Mensile - Admin</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -147,6 +144,7 @@ while($row = $res->fetch_assoc()) {
         @media(max-width: 768px) {
             .calendar-grid { grid-template-columns: repeat(1, 1fr); gap: 15px; }
             .day-cell { min-height: auto; flex-direction: row; align-items: center; }
+            .day-cell.empty { display: none; }
             .weekday-label { display: none; }
         }
     </style>
@@ -158,7 +156,7 @@ while($row = $res->fetch_assoc()) {
     <div class="cal-header">
         <a href="?m=<?php echo $mese-1; ?>&a=<?php echo $anno; ?>" class="nav-btn"><i class='bx bx-chevron-left'></i></a>
         <div class="cal-title">
-            <h1><?php echo $titolo_mese; ?></h1>
+            <h1><?php echo htmlspecialchars($titolo_mese, ENT_QUOTES, 'UTF-8'); ?></h1>
         </div>
         <a href="?m=<?php echo $mese+1; ?>&a=<?php echo $anno; ?>" class="nav-btn"><i class='bx bx-chevron-right'></i></a>
     </div>
@@ -177,22 +175,22 @@ while($row = $res->fetch_assoc()) {
         <?php endfor; ?>
 
         <?php for($g=1; $g<=$giorni_nel_mese; $g++): 
-            $data_corrente = "$anno-" . str_pad($mese, 2, "0", STR_PAD_LEFT) . "-" . str_pad($g, 2, "0", STR_PAD_LEFT);
+            $data_corrente = sprintf("%04d-%02d-%02d", $anno, $mese, $g);
             $is_today = ($data_corrente == date('Y-m-d')) ? 'today' : '';
             
             $visite_giorno = isset($appuntamenti_per_giorno[$g]) ? $appuntamenti_per_giorno[$g] : [];
             $numero_visite = count($visite_giorno);
             
             // Prepariamo i dati JSON sicuri per il JS
-            $json_giorno = htmlspecialchars(json_encode($visite_giorno), ENT_QUOTES, 'UTF-8');
+            $json_giorno = htmlspecialchars(json_encode($visite_giorno, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP), ENT_QUOTES, 'UTF-8');
         ?>
-            <div class="day-cell <?php echo $is_today; ?>" onclick='apriListaGiorno("<?php echo $data_corrente; ?>", <?php echo $json_giorno; ?>)'>
+            <div class="day-cell <?php echo $is_today; ?>" data-date="<?php echo htmlspecialchars($data_corrente, ENT_QUOTES, 'UTF-8'); ?>" data-visite="<?php echo $json_giorno; ?>">
                 <span class="day-number"><?php echo $g; ?></span>
                 
                 <?php if($numero_visite > 0): ?>
                     <div class="dots-container">
                         <?php foreach($visite_giorno as $v): ?>
-                            <div class="dot <?php echo $v['status']; ?>"></div>
+                            <div class="dot <?php echo htmlspecialchars($v['status'], ENT_QUOTES, 'UTF-8'); ?>"></div>
                         <?php endforeach; ?>
                     </div>
                     <div class="count-text"><?php echo $numero_visite; ?> Visite</div>
@@ -209,8 +207,7 @@ while($row = $res->fetch_assoc()) {
                 <span id="titoloLista">Visite del Giorno</span>
                 <span class="close-x" onclick="chiudiModale('modalLista')">&times;</span>
             </div>
-            <div id="contenutoLista">
-                </div>
+            <div id="contenutoLista"></div>
             <div style="margin-top:20px; text-align:center;">
                 <button onclick="chiudiModale('modalLista')" class="btn btn-close">Chiudi</button>
             </div>
@@ -225,6 +222,7 @@ while($row = $res->fetch_assoc()) {
             </div>
             
             <form action="admin_azioni_calendario.php" method="POST">
+                <?php echo csrf_field(); ?>
                 <input type="hidden" name="id" id="edit_id">
                 
                 <div class="form-group">
@@ -263,59 +261,89 @@ while($row = $res->fetch_assoc()) {
     </div>
 
     <script>
+        function escapeHtml(str) {
+            if (str === null || str === undefined) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        let currentVisiteGiorno = [];
+
+        document.querySelectorAll('.day-cell:not(.empty)').forEach(cell => {
+            cell.addEventListener('click', function() {
+                const date = this.getAttribute('data-date');
+                const rawVisite = this.getAttribute('data-visite');
+                let visite = [];
+                try {
+                    visite = JSON.parse(rawVisite) || [];
+                } catch(e) {
+                    visite = [];
+                }
+                apriListaGiorno(date, visite);
+            });
+        });
+
         // 1. APRI LISTA GIORNO
         function apriListaGiorno(data, visite) {
-            // Formatta la data per il titolo (opzionale: DD/MM/YYYY)
+            currentVisiteGiorno = visite;
             let dataArr = data.split('-');
             document.getElementById('titoloLista').innerText = "Visite del " + dataArr[2] + "/" + dataArr[1] + "/" + dataArr[0];
             
             let container = document.getElementById('contenutoLista');
-            container.innerHTML = ''; // Pulisce
+            container.innerHTML = '';
 
-            if (visite.length === 0) {
+            if (!visite || visite.length === 0) {
                 container.innerHTML = '<p style="text-align:center; color:#888;">Nessun appuntamento in questa data.</p>';
             } else {
-                // Ordina per orario
                 visite.sort((a, b) => (a.data_inizio > b.data_inizio) ? 1 : -1);
 
-                visite.forEach(v => {
-                    // Prepara dati per il prossimo modal
-                    let jsonV = JSON.stringify(v).replace(/"/g, '&quot;');
-                    
-                    // Estrai ora
-                    let ora = v.data_inizio.split(' ')[1].substring(0, 5);
-                    
-                    let html = `
-                    <div class="list-item ${v.status}">
+                visite.forEach((v, index) => {
+                    let ora = (v.data_inizio && v.data_inizio.split(' ')[1]) ? v.data_inizio.split(' ')[1].substring(0, 5) : '';
+                    let statusSafe = escapeHtml(v.status || '');
+                    let nomeSafe = escapeHtml(v.nome || '');
+                    let servizioSafe = escapeHtml((v.servizio || '').replace(/_/g, ' '));
+                    let telefonoSafe = escapeHtml(v.telefono || '');
+
+                    let itemDiv = document.createElement('div');
+                    itemDiv.className = 'list-item ' + statusSafe;
+                    itemDiv.innerHTML = `
                         <div class="item-info">
-                            <strong>${ora} - ${v.nome}</strong>
-                            <span>${v.servizio.replace('_', ' ')} • ${v.telefono}</span>
+                            <strong>${ora} - ${nomeSafe}</strong>
+                            <span>${servizioSafe} • ${telefonoSafe}</span>
                         </div>
-                        <button class="btn-gestisci" onclick='apriModifica(${jsonV})'>Gestisci</button>
-                    </div>`;
-                    container.innerHTML += html;
+                        <button type="button" class="btn-gestisci" data-index="${index}">Gestisci</button>
+                    `;
+
+                    itemDiv.querySelector('.btn-gestisci').addEventListener('click', function() {
+                        apriModifica(v);
+                    });
+
+                    container.appendChild(itemDiv);
                 });
             }
 
             document.getElementById('modalLista').style.display = 'flex';
         }
 
-        // 2. APRI MODIFICA (Chiude la lista e apre il form)
+        // 2. APRI MODIFICA
         function apriModifica(dati) {
             document.getElementById('modalLista').style.display = 'none';
             document.getElementById('modalModifica').style.display = 'flex';
 
-            // Popola i campi
-            document.getElementById('edit_id').value = dati.id;
-            document.getElementById('edit_nome').value = dati.nome;
-            // Estrai data e ora da SQL (YYYY-MM-DD HH:MM:SS)
-            let split = dati.data_inizio.split(' ');
-            document.getElementById('edit_data').value = split[0];
-            document.getElementById('edit_ora').value = split[1].substring(0,5);
-            document.getElementById('edit_status').value = dati.status;
+            document.getElementById('edit_id').value = dati.id || '';
+            document.getElementById('edit_nome').value = dati.nome || '';
+            
+            let split = (dati.data_inizio || '').split(' ');
+            document.getElementById('edit_data').value = split[0] || '';
+            document.getElementById('edit_ora').value = split[1] ? split[1].substring(0, 5) : '';
+            document.getElementById('edit_status').value = dati.status || 'in_attesa';
         }
 
-        // 3. TORNA INDIETRO (Dalla modifica alla lista - opzionale, qui chiudiamo e basta)
+        // 3. TORNA INDIETRO
         function tornaAllaLista() {
             document.getElementById('modalModifica').style.display = 'none';
             document.getElementById('modalLista').style.display = 'flex';

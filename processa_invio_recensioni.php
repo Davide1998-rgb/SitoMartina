@@ -1,28 +1,46 @@
 <?php
-session_start();
+require_once 'security.php';
+require_admin_login();
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
-if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) { header("Location: login.php"); exit; }
-require 'PHPMailer/Exception.php'; require 'PHPMailer/PHPMailer.php'; require 'PHPMailer/SMTP.php';
+
+require 'PHPMailer/Exception.php';
+require 'PHPMailer/PHPMailer.php';
+require 'PHPMailer/SMTP.php';
 require_once 'config_mail.php';
 
 $report = [];
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['pacchetto_dati'])) {
-    $lista_destinatari = json_decode(base64_decode($_POST['pacchetto_dati']), true);
-    // FIX: usa BASE_URL da config_mail.php
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['pacchetto_dati'])) {
+    require_csrf_token();
+
+    $raw = base64_decode($_POST['pacchetto_dati']);
+    $lista_destinatari = $raw ? json_decode($raw, true) : null;
     $link_recensione = BASE_URL . "/lascia_recensione.html";
 
     if (is_array($lista_destinatari)) {
         foreach ($lista_destinatari as $persona) {
-            $nome = $persona['nome']; $email = $persona['email'];
+            $nome = trim($persona['nome'] ?? '');
+            $email = trim($persona['email'] ?? '');
+            $nome_safe = htmlspecialchars($nome, ENT_QUOTES, 'UTF-8');
+            $email_safe = htmlspecialchars($email, ENT_QUOTES, 'UTF-8');
+
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $report[] = "<li style='color:red'>❌ Email non valida per <strong>$nome_safe</strong></li>";
+                continue;
+            }
+
             $mail = new PHPMailer(true);
             try {
-                $mail->isSMTP(); $mail->Host = MAIL_HOST; $mail->SMTPAuth = true;
-                $mail->Username = MAIL_USER; $mail->Password = MAIL_PASS;
+                $mail->isSMTP();
+                $mail->Host = MAIL_HOST;
+                $mail->SMTPAuth = true;
+                $mail->Username = MAIL_USER;
+                $mail->Password = MAIL_PASS;
                 $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-                $mail->Port = MAIL_PORT; $mail->CharSet = 'UTF-8';
-                // FIX: usa MAIL_FROM_NAME coerentemente (prima usava $mail->Username come nome)
+                $mail->Port = MAIL_PORT;
+                $mail->CharSet = 'UTF-8';
                 $mail->setFrom(MAIL_USER, MAIL_FROM_NAME);
                 $mail->addAddress($email, $nome);
                 $mail->isHTML(true);
@@ -38,7 +56,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['pacchetto_dati'])) {
     <h2 style='color:#FFFFFF;margin:0;font-family:Georgia,serif;'>Grazie per la visita!</h2>
   </td></tr>
   <tr><td align='center' style='padding:30px 20px;'>
-    <h3 style='color:#668073;margin:0 0 15px;'>Ciao $nome,</h3>
+    <h3 style='color:#668073;margin:0 0 15px;'>Ciao $nome_safe,</h3>
     <p style='color:#555;font-size:16px;line-height:1.5;margin-bottom:20px;'>Mi piacerebbe sapere come ti stai trovando nel tuo percorso.</p>
     <table border='0' cellspacing='0' cellpadding='0'>
       <tr><td align='center' style='border-radius:50px;' bgcolor='#668073'>
@@ -52,16 +70,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['pacchetto_dati'])) {
 </table>
 </div></body></html>";
                 $mail->send();
-                $report[] = "<li style='color:green'>✅ Inviata a <strong>$nome</strong> ($email)</li>";
+                $report[] = "<li style='color:green'>✅ Inviata a <strong>$nome_safe</strong> ($email_safe)</li>";
             } catch (Exception $e) {
-                $report[] = "<li style='color:red'>❌ Errore $nome: {$mail->ErrorInfo}</li>";
+                $err_info = htmlspecialchars($mail->ErrorInfo, ENT_QUOTES, 'UTF-8');
+                $report[] = "<li style='color:red'>❌ Errore per $nome_safe: $err_info</li>";
             }
         }
     }
 }
 ?>
 <!DOCTYPE html>
-<html lang="it"><head><meta charset="UTF-8"><title>Esito Invio</title>
+<html lang="it"><head><link rel="icon" type="image/png" href="img/logo.svg"><meta charset="UTF-8"><title>Esito Invio</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
 <style>
 body{font-family:'Montserrat',sans-serif;background:#F0F2F5;padding:20px;display:flex;justify-content:center;align-items:center;min-height:100vh;}

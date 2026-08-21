@@ -6,6 +6,7 @@ define('STATS_DIR', dirname(__DIR__) . '/private_data/');
 
 $tempo_speso  = isset($_POST['tempo'])     ? (int)$_POST['tempo']     : 0;
 $ha_prenotato = isset($_POST['prenotato']) ? (int)$_POST['prenotato'] : 0;
+$evento       = $_POST['evento'] ?? '';
 $user_agent   = $_SERVER['HTTP_USER_AGENT'] ?? '';
 
 $is_bot = 0;
@@ -31,7 +32,9 @@ if ($fp && flock($fp, LOCK_EX)) {
         $dati[$giorno_corrente] = ['visite_umane' => 0, 'visite_bot' => 0, 'tempo_totale_secondi' => 0, 'prenotazioni' => 0];
     }
 
-    if ($is_bot) {
+    if ($evento === 'prenotazione') {
+        $dati[$giorno_corrente]['prenotazioni'] += 1;
+    } elseif ($is_bot) {
         $dati[$giorno_corrente]['visite_bot'] += 1;
     } else {
         $dati[$giorno_corrente]['visite_umane']         += 1;

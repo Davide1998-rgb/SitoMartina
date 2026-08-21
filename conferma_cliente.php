@@ -2,16 +2,21 @@
 // FILE: conferma_cliente.php
 // Pagina pubblica: il paziente clicca "Sì, ci sarò" dall'email di promemoria.
 
+require_once 'security.php';
 require_once 'db_connect.php';
 
-$id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+$id    = isset($_GET['id']) ? intval($_GET['id']) : 0;
+$token = $_GET['token'] ?? '';
 
-// FIX: prepared statement invece di query diretta con id interpolato
-if ($id > 0) {
+$esito_valido = false;
+
+// Verifica che l'ID esista e che il token HMAC corrisponda
+if ($id > 0 && verify_action_token('conferma_cliente', $id, $token)) {
     $stmt = $conn->prepare("UPDATE prenotazioni SET conferma_cliente = 1 WHERE id = ?");
     $stmt->bind_param("i", $id);
     $stmt->execute();
     $stmt->close();
+    $esito_valido = true;
 }
 
 $conn->close();
@@ -19,6 +24,7 @@ $conn->close();
 <!DOCTYPE html>
 <html lang="it">
 <head>
+    <link rel="icon" type="image/png" href="img/logo.svg">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Conferma Presenza - Dott.ssa Violo</title>
@@ -62,10 +68,17 @@ $conn->close();
 </head>
 <body>
     <div class="card">
-        <span class="icon">✅</span>
-        <h1>Grazie!</h1>
-        <p>La tua presenza per domani è stata confermata correttamente.</p>
-        <p>La Dott.ssa Violo ti aspetta in studio.</p>
+        <?php if ($esito_valido): ?>
+            <span class="icon">✅</span>
+            <h1>Grazie!</h1>
+            <p>La tua presenza per domani è stata confermata correttamente.</p>
+            <p>La Dott.ssa Violo ti aspetta in studio.</p>
+        <?php else: ?>
+            <span class="icon">⚠️</span>
+            <h1 style="color:#d9534f;">Link non valido</h1>
+            <p>Questo link di conferma non è valido o è scaduto.</p>
+            <p>Per informazioni, contatta direttamente la Dott.ssa Violo.</p>
+        <?php endif; ?>
         <a href="index.html" class="btn">Torna al sito</a>
     </div>
 </body>

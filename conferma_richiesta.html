@@ -2,9 +2,9 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Richiesta Inviata - Dott.ssa Violo</title>
-    <link rel="icon" type="image/png" href="img/favicon.png">
+    <link rel="icon" type="image/png" href="img/logo.svg">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="style.css"> <style>
@@ -85,13 +85,31 @@
         <h1>Richiesta Inviata!</h1>
         
         <p>
-            Grazie per aver prenotato.<br>
-            Ho ricevuto la tua richiesta e ti ho appena inviato una mail di riepilogo.<br><br>
-            <strong>Controlla la tua casella di posta</strong> (anche nello spam): riceverai presto la conferma definitiva.
+            La tua richiesta è stata ricevuta correttamente.<br>
+            Ho registrato la tua prenotazione e ti ho appena inviato una mail di conferma con i dettagli.<br><br>
+            <strong>Controlla anche la cartella spam</strong> se non dovessi vedere la mail entro qualche minuto.<br>
+            Ti risponderò con la conferma definitiva o con eventuali modifiche possibili al tuo appuntamento.
         </p>
+
+        <div style="margin: 20px 0 30px; padding: 16px 18px; border-radius: 12px; background: #F5F8F6; text-align:left; color:#3d4f46; line-height:1.7; font-size:0.95rem;">
+            <strong>Ti ricordiamo:</strong><br>
+            • La richiesta non è ancora definitiva.<br>
+            • Riceverai la conferma via email o WhatsApp.<br>
+            • Se necessario, puoi chiedere di modificare o annullare l'appuntamento tramite il link ricevuto.
+        </div>
 
         <a href="index.html" class="btn-home">Torna alla Home</a>
     </div>
+
+    <script>
+        if (new URLSearchParams(window.location.search).get('conversione') === '1'
+            && !sessionStorage.getItem('conversione_inviata')) {
+            sessionStorage.setItem('conversione_inviata', '1');
+            const dati = new FormData();
+            dati.append('evento', 'prenotazione');
+            navigator.sendBeacon('api_statistiche.php', dati);
+        }
+    </script>
 
 </body>
 </html>

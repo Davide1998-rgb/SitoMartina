@@ -1,0 +1,25 @@
+{
+  "name": "Dashboard Martina Violo",
+  "short_name": "Dashboard",
+  "description": "Area amministrativa personale della Dott.ssa Martina Violo",
+  "start_url": "./dashboard.php",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#FBF3E4",
+  "theme_color": "#668073",
+  "lang": "it-IT",
+  "icons": [
+    {
+      "src": "img/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "img/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 <?php
-session_start();
-if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) { header("Location: login.php"); exit; }
+require_once 'security.php';
+require_admin_login();
+
 
 // Percorso coerente con api_statistiche.php (fuori dalla webroot)
 define('STATS_DIR', dirname(__DIR__) . '/private_data/');
@@ -44,7 +45,7 @@ $tempo_medio_sec   = $tot_visite > 0 ? round($tot_tempo / $tot_visite) : 0;
 $tempo_formattato  = floor($tempo_medio_sec / 60) . "m " . ($tempo_medio_sec % 60) . "s";
 $tasso_conversione = $tot_visite > 0 ? round(($tot_prenotazioni / $tot_visite) * 100, 1) : 0;
 ?>
-<!DOCTYPE html><html lang="it"><head>
+<!DOCTYPE html><html lang="it"><head><link rel="icon" type="image/png" href="img/logo.svg">
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Statistiche Sito</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
@@ -73,7 +74,9 @@ th{background:#f9f9f9;color:#668073;font-weight:600;}
 tr:hover{background:#fafafa;}
 .badge-bot{font-size:0.75rem;background:#eee;padding:3px 8px;border-radius:20px;color:#888;}
 .btn-back{display:inline-block;color:#668073;text-decoration:none;font-weight:600;margin-bottom:20px;}
-</style></head><body>
+</style>
+<link rel="stylesheet" href="admin.css">
+</head><body>
 <div class="container">
     <a href="dashboard.php" class="btn-back">← Torna alla Dashboard</a>
 

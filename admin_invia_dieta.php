@@ -1,9 +1,6 @@
 <?php
-session_start();
-if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
-    header("Location: login.php");
-    exit;
-}
+require_once 'security.php';
+require_admin_login();
 include 'db_connect.php';
 
 $sql = "SELECT DISTINCT email, nome FROM prenotazioni WHERE email != '' ORDER BY nome ASC";
@@ -13,6 +10,7 @@ $result = $conn->query($sql);
 <!DOCTYPE html>
 <html lang="it">
 <head>
+    <link rel="icon" type="image/png" href="img/logo.svg">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Invia Dieta</title>
@@ -86,7 +84,7 @@ $result = $conn->query($sql);
             background: #f9f9f9; 
             padding: 15px; 
             border: 2px dashed #668073; 
-            border-radius: 8px;
+            border-radius: 8px; 
             width: 100%; 
             font-size: 0.9rem;
         }
@@ -145,9 +143,9 @@ $result = $conn->query($sql);
         
         .error-msg { 
             color: #d32f2f; 
-            background: #ffebee;
-            padding: 10px;
-            border-radius: 5px;
+            background: #ffebee; 
+            padding: 10px; 
+            border-radius: 5px; 
             font-size: 0.9rem; 
             display: none; 
             margin-top: 10px; 
@@ -163,7 +161,8 @@ $result = $conn->query($sql);
     <h2>Invia Piano Nutrizionale</h2>
     <p style="color:#666; font-size:0.95rem; line-height: 1.5;">È obbligatorio allegare il file <strong>PDF</strong> della dieta.</p>
 
-    <form action="processa_invia_dieta.php" method="POST" enctype="multipart/form-data" onsubmit="return validaForm()">
+    <form action="processa_invia_dieta.php" method="POST" enctype="multipart/form-data" onsubmit="return gestisciInvio(event)">
+        <?php echo csrf_field(); ?>
 
         <div class="mode-selector">
             <label>
@@ -183,7 +182,9 @@ $result = $conn->query($sql);
                 <?php 
                 if ($result->num_rows > 0) {
                     while($row = $result->fetch_assoc()) {
-                        echo "<option value='{$row['email']}|{$row['nome']}'>{$row['nome']} ({$row['email']})</option>";
+                        $email_option = htmlspecialchars($row['email'], ENT_QUOTES, 'UTF-8');
+                        $nome_option = htmlspecialchars($row['nome'], ENT_QUOTES, 'UTF-8');
+                        echo "<option value='{$email_option}|{$nome_option}'>{$nome_option} ({$email_option})</option>";
                     }
                 }
                 ?>
@@ -201,11 +202,49 @@ $result = $conn->query($sql);
         <input type="file" name="file_dieta" id="fileInput" required accept="application/pdf, .pdf">
         <div id="fileError" class="error-msg">⚠️ Errore: Devi caricare un file PDF!</div>
 
+        <label>Oggetto della mail:</label>
+        <input type="text" name="oggetto" placeholder="Il tuo Piano Nutrizionale - Dott.ssa Violo">
+
         <label>Messaggio (Opzionale):</label>
         <textarea name="messaggio" rows="4" placeholder="Ciao, ecco il tuo piano nutrizionale..."></textarea>
 
         <button type="submit" class="btn">Invia Dieta 📤</button>
     </form>
+</div>
+
+<div class="email-preview-overlay" id="email-preview" hidden>
+    <div class="email-preview" role="dialog" aria-modal="true" aria-labelledby="email-preview-title">
+        <div class="email-preview-header">
+            <div>
+                <span class="email-preview-eyebrow">Anteprima email</span>
+                <h2 id="email-preview-title">Il tuo Piano Nutrizionale</h2>
+            </div>
+            <button type="button" class="email-preview-close" onclick="chiudiAnteprima()" aria-label="Chiudi anteprima">&times;</button>
+        </div>
+
+        <div class="email-preview-meta">
+            <div><strong>Destinatario</strong><span id="preview-recipient">-</span></div>
+            <div><strong>Allegato</strong><span id="preview-file">-</span></div>
+            <div><strong>Oggetto</strong><span id="preview-subject">-</span></div>
+        </div>
+
+        <div class="email-preview-body">
+            <p class="email-preview-brand">Dott.ssa Martina Violo</p>
+            <h3 id="preview-greeting">Ciao!</h3>
+            <p class="email-preview-lead">Ecco il tuo piano nutrizionale.</p>
+            <div class="email-preview-message" id="preview-message" hidden></div>
+            <div class="email-preview-attachment">
+                <strong>Allegato presente</strong>
+                <span>La dieta verrà inviata in formato PDF.</span>
+            </div>
+            <p class="email-preview-signature">Con cura,<br>Dott.ssa Martina Violo</p>
+        </div>
+
+        <div class="email-preview-actions">
+            <button type="button" class="btn-no-mail" onclick="chiudiAnteprima()">Modifica</button>
+            <button type="button" class="btn" onclick="confermaInvio()">Conferma e invia</button>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -242,6 +281,63 @@ $result = $conn->query($sql);
         
         errorDiv.style.display = 'none';
         return true;
+    }
+
+    function gestisciInvio(event) {
+        var form = event.target;
+        if (form.dataset.confermato === '1') return true;
+        event.preventDefault();
+
+        if (!validaForm()) return false;
+        mostraAnteprima();
+        return false;
+    }
+
+    function mostraAnteprima() {
+        var form = document.querySelector('form');
+        var modalita = form.querySelector('input[name="modalita"]:checked').value;
+        var nome = '';
+        var email = '';
+
+        if (modalita === 'elenco') {
+            var selezione = form.querySelector('select[name="email_elenco"]');
+            if (selezione.value) {
+                var dati = selezione.value.split('|');
+                email = dati.shift() || '';
+                nome = dati.join('|');
+            }
+        } else {
+            nome = form.querySelector('[name="nome_manuale"]').value.trim();
+            email = form.querySelector('[name="email_manuale"]').value.trim();
+        }
+
+        if (!nome || !email) {
+            alert('Inserisci nome ed email del destinatario prima di continuare.');
+            return;
+        }
+
+        var messaggio = form.querySelector('[name="messaggio"]').value.trim();
+        var oggetto = form.querySelector('[name="oggetto"]').value.trim();
+        var file = document.getElementById('fileInput').files[0];
+        document.getElementById('preview-recipient').textContent = nome + ' <' + email + '>';
+        document.getElementById('preview-file').textContent = file ? file.name : '-';
+        document.getElementById('preview-subject').textContent = oggetto || 'Il tuo Piano Nutrizionale - Dott.ssa Violo';
+        document.getElementById('preview-greeting').textContent = 'Ciao ' + nome + '!';
+
+        var messageBox = document.getElementById('preview-message');
+        messageBox.textContent = messaggio;
+        messageBox.hidden = !messaggio;
+        document.getElementById('email-preview').hidden = false;
+    }
+
+    function chiudiAnteprima() {
+        document.getElementById('email-preview').hidden = true;
+    }
+
+    function confermaInvio() {
+        var form = document.querySelector('form');
+        form.dataset.confermato = '1';
+        form.submit();
     }
 </script>
 

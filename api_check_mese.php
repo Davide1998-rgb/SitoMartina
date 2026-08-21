@@ -3,6 +3,8 @@
 // Restituisce i giorni del mese da bloccare nel calendario di prenotazione.
 
 require_once 'db_connect.php';
+require_once 'disponibilita.php';
+date_default_timezone_set('Europe/Rome');
 
 // Disabilita la visualizzazione degli errori HTML per evitare di rompere il formato JSON
 ini_set('display_errors', 0);
@@ -34,10 +36,20 @@ for ($i = 1; $i <= $giorni_nel_mese; $i++) {
         continue;
     }
 
-    // Domenica → bloccata di default (studio chiuso)
-    if ($giorno_settimana === 7) {
+    // Sono prenotabili solo martedì, mercoledì, venerdì e sabato.
+    if (!in_array($giorno_settimana, [2, 3, 5, 6], true)) {
         $giorni_bloccati[] = $i;
         continue;
+    }
+
+    // Non consentire prenotazioni per il giorno stesso.
+    if ($data_ciclo === $oggi) {
+        $giorni_bloccati[] = $i;
+        continue;
+    }
+
+    if (disponibilita_giorno_bloccato($conn, $data_ciclo)) {
+        $giorni_bloccati[] = $i;
     }
 }
 

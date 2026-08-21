@@ -1,32 +1,29 @@
 <?php
-session_start();
-if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
-    header("Location: login.php");
-    exit;
-}
+require_once 'security.php';
+require_admin_login();
 ?>
 <!DOCTYPE html>
 <html lang="it">
 <head>
+    <link rel="icon" type="image/png" href="img/logo.svg">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Aggiungi Recensione</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        /* Reset e Box Sizing per layout fluido */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body { 
             font-family: 'Montserrat', sans-serif; 
             background: #F0F2F5; 
             margin: 0;
-            padding: 15px; /* Padding ridotto per schermi piccoli */
+            padding: 15px;
             color: #333;
         }
 
         .container { 
             max-width: 500px; 
-            width: 100%; /* Si adatta alla larghezza dello schermo */
+            width: 100%; 
             margin: 0 auto; 
             background: white; 
             padding: 25px; 
@@ -34,7 +31,6 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
             box-shadow: 0 5px 15px rgba(0,0,0,0.1); 
         }
 
-        /* Label più leggibili */
         label {
             display: block;
             margin-top: 15px;
@@ -43,15 +39,16 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
             color: #444;
         }
 
-        /* Input ottimizzati per il touch */
         input, textarea, select { 
             width: 100%; 
-            padding: 12px; /* Area di tocco più ampia */
+            padding: 12px; 
             margin: 8px 0; 
             border: 1px solid #ccc; 
             border-radius: 8px; 
-            font-size: 16px; /* Previene lo zoom automatico su iOS */
+            font-size: 16px; 
             background: #fafafa;
+            box-sizing: border-box;
+            font-family: inherit;
         }
 
         input:focus, textarea:focus, select:focus {
@@ -66,27 +63,20 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
         .btn { 
             background: #668073; 
             color: white; 
-            padding: 15px; /* Pulsante più alto per il dito */
+            padding: 15px; 
             border: none; 
             width: 100%; 
             cursor: pointer; 
             font-weight: bold; 
             border-radius: 8px; 
-            font-size: 1rem;
-            margin-top: 20px;
+            font-size: 1rem; 
+            margin-top: 20px; 
             transition: background 0.2s;
+            font-family: inherit;
         }
 
         .btn:hover {
             background: #556b60;
-        }
-
-        .top-link { 
-            display:block; 
-            margin-bottom:20px; 
-            color:#668073; 
-            text-decoration:none; 
-            font-weight:bold; 
         }
     </style>
 </head>
@@ -98,6 +88,7 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
             La recensione verrà pubblicata subito e inserita direttamente nella sezione recensioni della home.
         </p>
         <form action="salva_recensione.php" method="POST">
+            <?php echo csrf_field(); ?>
             <label>Nome Cliente</label>
             <input type="text" name="nome" required placeholder="Es. Laura B.">
             
@@ -109,7 +100,7 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
                 <option value="5">5 Stelle</option>
                 <option value="4">4 Stelle</option>
                 <option value="3">3 Stelle</option>
-		<option value="2">2 Stelle</option>
+                <option value="2">2 Stelle</option>
                 <option value="1">1 Stelle</option>
             </select>
 

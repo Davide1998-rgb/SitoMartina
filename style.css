@@ -66,6 +66,7 @@ header .container { display: flex; justify-content: space-between; align-items: 
 /* Menu Desktop */
 .nav-menu ul { list-style: none; display: flex; gap: 1.56rem; align-items: center; }
 .nav-menu a { text-decoration: none; color: #FFFFFF; font-weight: 500; position: relative; padding-bottom: 0.3rem; font-size: 0.95rem; opacity: 0.9; }
+.nav-menu a { white-space: nowrap; }
 .nav-menu a:hover { opacity: 1; }
 .nav-menu a::after { content: ''; position: absolute; width: 0; height: 2px; bottom: 0; left: 0; background-color: #FBF3E4; transition: width 0.3s ease-in-out; }
 .nav-menu a:hover::after { width: 100%; }
@@ -73,15 +74,44 @@ header .container { display: flex; justify-content: space-between; align-items: 
 .menu-toggle { display: none; font-size: 2rem; color: #FFFFFF; cursor: pointer; }
 
 .nav-menu .btn-prenota {
-    background: #FBF3E4; color: #668073 !important; padding: 0.625rem 1.56rem;
-    border-radius: 1.56rem; font-weight: 700; border: 2px solid #FBF3E4; 
-    box-shadow: 0 0.3rem 0.94rem rgba(0,0,0,0.1); transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.75rem;
+    min-width: 8.75rem;
+    background: #FFFDF7;
+    color: #3D5C4D !important;
+    padding: 0.625rem 1.25rem;
+    border-radius: 1.56rem;
+    font-weight: 700;
+    opacity: 1;
+    white-space: nowrap;
+    border: 2px solid #FFFDF7;
+    box-shadow: 0 0.3rem 0.94rem rgba(26,38,33,0.2);
+    transition: all 0.3s;
 }
 .nav-menu .btn-prenota:hover {
     transform: translateY(-0.125rem); background: transparent;
     color: #FFFFFF !important; border: 2px solid #FFFFFF;
 }
 .nav-menu .btn-prenota::after { display: none !important; }
+
+@media (max-width: 1100px) and (min-width: 769px) {
+    .nav-menu ul { gap: 0.8rem; }
+    .nav-menu a { font-size: 0.84rem; }
+    .nav-menu .btn-prenota { min-width: 7.8rem; padding-inline: 0.8rem; }
+}
+
+/* La navigazione passa a menu compatto prima che le voci si comprimano. */
+@media (max-width: 1050px) {
+    header .container { flex-wrap: wrap; }
+    .nav-menu { display: none; width: 100%; margin-top: 1rem; background: #556b60; border-radius: 1rem; padding: 1rem; }
+    .nav-menu.active { display: block; animation: fadeUp 0.3s; }
+    .nav-menu ul { flex-direction: column; gap: 0.75rem; }
+    .nav-menu a { font-size: 0.95rem; }
+    .nav-menu .btn-prenota { width: 100%; min-height: 3rem; margin-top: 0.35rem; }
+    .menu-toggle { display: block; }
+}
 
 /* --- 3. HERO SECTION --- */
 #hero { background-color: transparent; padding: 6.25rem 0 5rem 0; position: relative; overflow: hidden; }
@@ -395,6 +425,7 @@ footer { background-color: #668073; color: #FFFFFF; padding: 3.75rem 0; margin-t
     .nav-menu { display: none; width: 100%; margin-top: 1rem; background: #556b60; border-radius: 1rem; padding: 1rem; }
     .nav-menu.active { display: block; animation: fadeUp 0.3s; }
     .nav-menu ul { flex-direction: column; }
+    .nav-menu .btn-prenota { width: 100%; min-height: 3rem; margin-top: 0.35rem; }
     .menu-toggle { display: block; }
     
     .hero-container { flex-direction: column-reverse; text-align: center; }
@@ -404,12 +435,12 @@ footer { background-color: #668073; color: #FFFFFF; padding: 3.75rem 0; margin-t
     .bento-text { grid-column: auto; }
     .scelta-servizio { flex-direction: column; }
     .contact-wrapper { flex-direction: column; }
-    .mobile-sticky-bar { display: flex; position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(255,255,255,0.95); padding: 0.6rem; z-index: 9999; border-top: 1px solid #eee; gap: 0.5rem; }
-    .mobile-sticky-bar a { flex: 1; text-align: center; padding: 0.75rem; border-radius: 2rem; text-decoration: none; font-weight: bold; }
+    .mobile-sticky-bar { display: flex; position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(255,255,255,0.95); padding: 0.6rem 0.6rem calc(0.6rem + env(safe-area-inset-bottom)); z-index: 9999; border-top: 1px solid #eee; gap: 0.5rem; }
+    .mobile-sticky-bar a { flex: 1; min-height: 3rem; display: flex; align-items: center; justify-content: center; text-align: center; padding: 0.75rem 0.5rem; border-radius: 2rem; text-decoration: none; font-weight: bold; font-size: 0.85rem; white-space: nowrap; }
     .btn-sticky-whatsapp { background: #25D366; color: white; }
     .btn-sticky-book { background: #668073; color: white; }
 }
-@media (min-width: 768px) { .mobile-sticky-bar { display: none; } }
+@media (min-width: 769px) { .mobile-sticky-bar { display: none; } }
 
 /* --- FIX CALENDARIO MOBILE (DEFINITIVO) --- */
 @media (max-width: 600px) {
@@ -945,6 +976,126 @@ section,
 @keyframes popIn {
     0% { opacity: 0; transform: translateY(20px) scale(0.95); }
     100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Accessibilita e feedback del percorso di prenotazione */
+.choice-card,
+.btn-card {
+    font: inherit;
+}
+
+.choice-card {
+    border: 2px solid transparent;
+}
+
+.wizard-progress {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin: 0 0 2rem;
+    padding: 0;
+    list-style: none;
+    width: 100%;
+    max-width: 100%;
+}
+
+.wizard-progress li {
+    position: relative;
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-width: 0;
+    color: #8a938e;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.04rem;
+    line-height: 1.3;
+}
+
+.wizard-progress li::before {
+    content: attr(data-step);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    margin: 0 auto 0.45rem;
+    border: 2px solid #dce5df;
+    border-radius: 50%;
+    background: #fff;
+    color: #8a938e;
+    z-index: 1;
+    flex-shrink: 0;
+}
+
+.wizard-progress li:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 1rem;
+    left: calc(50% + 1.1rem);
+    width: calc(100% - 2.2rem);
+    height: 2px;
+    background: #dce5df;
+    z-index: 0;
+}
+
+.wizard-progress li.active,
+.wizard-progress li.completed { color: #668073; }
+
+.wizard-progress li.active::before,
+.wizard-progress li.completed::before {
+    border-color: #668073;
+    background: #668073;
+    color: #fff;
+}
+
+.wizard-progress li.completed:not(:last-child)::after { background: #668073; }
+
+.booking-status {
+    margin: 1rem 0;
+    padding: 0.8rem 1rem;
+    border-left: 4px solid #668073;
+    border-radius: 0.5rem;
+    background: #f4f8f6;
+    color: #1A2621;
+    font-size: 0.9rem;
+}
+
+.booking-status.is-error { border-left-color: #b23b3b; background: #fff2f2; color: #7a2424; }
+.booking-status.is-info { border-left-color: #c28a1a; background: #fff9e8; color: #6e5109; }
+
+:where(a, button, input, select, textarea):focus-visible {
+    outline: 3px solid rgba(102, 128, 115, 0.55);
+    outline-offset: 3px;
+}
+
+@media (max-width: 768px) {
+    body { padding-bottom: 5.25rem; }
+    .wizard-progress {
+        gap: 0.35rem;
+    }
+    .wizard-progress li {
+        font-size: 0.57rem;
+        letter-spacing: 0.02rem;
+    }
+    .wizard-progress li:not(:last-child)::after {
+        left: calc(50% + 0.75rem);
+        width: calc(100% - 1.5rem);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
 }
 /* =========================================
    NUOVA SEZIONE PRENOTAZIONE (SCELTA + WIZARD)
@@ -1514,7 +1665,7 @@ section,
 /* --- 7. STICKY BAR: padding bottom per non coprire il contenuto --- */
 @media (max-width: 768px) {
     body {
-        padding-bottom: 4.5rem;
+        padding-bottom: calc(4.5rem + env(safe-area-inset-bottom));
     }
     .mobile-sticky-bar {
         justify-content: space-between;
@@ -1525,7 +1676,7 @@ section,
     /* Il cookie banner non deve sovrapporsi alla sticky bar.
        Solo .show viene alzato: lo stato hidden resta bottom:-100% */
     .cookie-banner.show {
-        bottom: 4.5rem !important;
+        bottom: calc(4.5rem + env(safe-area-inset-bottom)) !important;
     }
 }
 

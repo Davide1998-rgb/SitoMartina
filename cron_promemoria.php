@@ -1,4 +1,16 @@
 <?php
+require_once 'security.php';
+
+// Protezione: accessibile solo da CLI oppure via HTTP con token segreto
+$isCli = (php_sapi_name() === 'cli');
+$token = $_GET['token'] ?? '';
+$hasValidToken = hash_equals(CRON_SECRET_KEY, (string)$token);
+
+if (!$isCli && !$hasValidToken) {
+    http_response_code(403);
+    die("Accesso negato.");
+}
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 require 'PHPMailer/Exception.php';
@@ -9,7 +21,6 @@ require_once 'db_connect.php';
 
 $domani = date('Y-m-d', strtotime('+1 day'));
 
-// FIX: prepared statement (prima era interpolazione diretta)
 $stmt = $conn->prepare(
     "SELECT * FROM prenotazioni WHERE DATE(data_inizio) = ? AND status = 'confermata'"
 );
@@ -18,15 +29,19 @@ $stmt->execute();
 $result = $stmt->get_result();
 $stmt->close();
 
-if ($result->num_rows > 0) {
-    echo "Trovati {$result->num_rows} appuntamenti per domani ($domani). Invio mail...<br>";
+$inviate = 0;
+$errori = 0;
 
+if ($result && $result->num_rows > 0) {
     $mail = new PHPMailer(true);
     $mail->isSMTP();
-    $mail->Host = MAIL_HOST; $mail->SMTPAuth = true;
-    $mail->Username = MAIL_USER; $mail->Password = MAIL_PASS;
+    $mail->Host = MAIL_HOST;
+    $mail->SMTPAuth = true;
+    $mail->Username = MAIL_USER;
+    $mail->Password = MAIL_PASS;
     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-    $mail->Port = MAIL_PORT; $mail->CharSet = 'UTF-8';
+    $mail->Port = MAIL_PORT;
+    $mail->CharSet = 'UTF-8';
     $mail->setFrom(MAIL_USER, MAIL_FROM_NAME);
 
     while ($row = $result->fetch_assoc()) {
@@ -34,9 +49,13 @@ if ($result->num_rows > 0) {
             $mail->clearAddresses();
             $mail->addAddress($row['email']);
             $ora_app       = date('H:i', strtotime($row['data_inizio']));
-            $link_conferma = BASE_URL . "/conferma_cliente.php?id=" . $row['id'];
-            // FIX: era .row['nome'] senza $ → fatal error
-            $nome_paziente = $row['nome'];
+            
+            // Generazione token HMAC per la conferma cliente
+            $token_cliente = generate_action_token('conferma_cliente', $row['id']);
+            $link_conferma = BASE_URL . "/conferma_cliente.php?id=" . $row['id'] . "&token=" . $token_cliente;
+            $token_annulla = generate_action_token('annulla_cliente', $row['id']);
+            $link_annulla = BASE_URL . "/annulla_cliente.php?id=" . $row['id'] . "&token=" . $token_annulla;
+            $nome_paziente = htmlspecialchars($row['nome'], ENT_QUOTES, 'UTF-8');
 
             $mail->Subject = "Promemoria Appuntamento per Domani - Dott.ssa Violo";
             $mail->isHTML(true);
@@ -62,17 +81,23 @@ if ($result->num_rows > 0) {
       </td></tr>
     </table>
     <p style='margin-top:30px;font-size:13px;color:#999;'>Se non puoi venire, avvisa su WhatsApp il prima possibile.</p>
+    <p style='font-size:13px;'><a href='$link_annulla' style='color:#b23b3b;'>Annulla appuntamento</a></p>
   </td></tr>
 </table>
 </div>";
             $mail->send();
-            echo "✅ Mail inviata a: $nome_paziente<br>";
+            $inviate++;
         } catch (Exception $e) {
-            echo "❌ Errore per {$row['nome']}: {$mail->ErrorInfo}<br>";
+            $errori++;
         }
     }
-} else {
-    echo "Nessun appuntamento confermato per domani ($domani).";
 }
+
 $conn->close();
+
+if ($isCli) {
+    echo "Promemoria inviati: $inviate, Errori: $errori\n";
+} else {
+    echo "Esecuzione completata. Promemoria inviati: $inviate, Errori: $errori.";
+}
 ?>

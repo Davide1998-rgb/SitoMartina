@@ -2,11 +2,8 @@
 // FILE: salva_recensione.php
 // Salva una recensione inserita manualmente dall'admin (già approvata).
 
-session_start();
-if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
-    header("Location: login.php");
-    exit;
-}
+require_once 'security.php';
+require_admin_login();
 
 require_once 'db_connect.php';
 require_once 'aggiorna_index_recensioni.php';
@@ -17,17 +14,18 @@ $messaggio = "";
 $colore   = "";
 $link_back = "dashboard.php";
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    require_csrf_token();
+
     $nome  = trim($_POST['nome'] ?? '');
     $testo = trim($_POST['testo'] ?? '');
-    $voto  = (int)$_POST['voto'];
+    $voto  = isset($_POST['voto']) ? (int)$_POST['voto'] : 0;
     $fonte = ($_POST['fonte'] ?? '') === 'google' ? 'google' : 'sito';
 
     if ($nome === '' || strlen($nome) > 150 || $testo === '' || strlen($testo) > 5000 || $voto < 1 || $voto > 5) {
         die("Dati recensione non validi. Torna indietro e riprova.");
     }
 
-    // FIX: prepared statement al posto di real_escape_string + interpolazione
     $stmt = $conn->prepare(
         "INSERT INTO recensioni (nome, testo, voto, fonte, approvata) VALUES (?, ?, ?, ?, 1)"
     );
@@ -38,7 +36,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $colore    = "#668073";
         $icona     = "bx-check-circle";
         $titolo    = "Recensione Salvata!";
-        $messaggio = "La recensione di <strong>" . htmlspecialchars($nome) . "</strong> è stata aggiunta con successo.";
+        $nome_safe = htmlspecialchars($nome, ENT_QUOTES, 'UTF-8');
+        $messaggio = "La recensione di <strong>" . $nome_safe . "</strong> è stata aggiunta con successo.";
         if (!$indexAggiornato) {
             $messaggio .= "<br><small>Attenzione: il database è aggiornato, ma la home non è stata rigenerata.</small>";
         }
@@ -46,7 +45,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $colore    = "#d9534f";
         $icona     = "bx-error-circle";
         $titolo    = "Errore!";
-        $messaggio = "Impossibile salvare la recensione.<br>Dettagli: " . $conn->error;
+        $messaggio = "Impossibile salvare la recensione.<br>Dettagli: " . htmlspecialchars($conn->error, ENT_QUOTES, 'UTF-8');
     }
     $stmt->close();
 }
@@ -56,6 +55,7 @@ $conn->close();
 <!DOCTYPE html>
 <html lang="it">
 <head>
+    <link rel="icon" type="image/png" href="img/logo.svg">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Esito Salvataggio</title>

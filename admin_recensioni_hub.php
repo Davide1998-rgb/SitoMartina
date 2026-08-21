@@ -1,49 +1,45 @@
 <?php
 // FILE: admin_recensioni_hub.php
 
-session_start();
-if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
-    header("Location: login.php");
-    exit;
-}
+require_once 'security.php';
+require_admin_login();
 
 require_once 'db_connect.php';
 require_once 'aggiorna_index_recensioni.php';
 
-// --- LOGICA 1: AZIONI RAPIDE (Approva / Elimina) ---
-if (isset($_GET['action']) && isset($_GET['id'])) {
-    $id_rec = intval($_GET['id']);
-    $action = $_GET['action'];
+// --- LOGICA 1: AZIONI RAPIDE (Approva / Elimina via POST con CSRF) ---
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['action']) && isset($_POST['id'])) {
+    require_csrf_token();
+    $id_rec = intval($_POST['id']);
+    $action = $_POST['action'];
 
-    if (!in_array($action, ['approve', 'delete'])) {
+    if (in_array($action, ['approve', 'delete'], true)) {
+        if ($action === 'approve') {
+            $stmt = $conn->prepare("UPDATE recensioni SET approvata = 1 WHERE id = ?");
+        } else {
+            $stmt = $conn->prepare("DELETE FROM recensioni WHERE id = ?");
+        }
+        $stmt->bind_param("i", $id_rec);
+        $stmt->execute();
+        $stmt->close();
+        aggiornaIndexRecensioni($conn);
+
         header("Location: admin_recensioni_hub.php");
         exit;
     }
-
-    if ($action == 'approve') {
-        $stmt = $conn->prepare("UPDATE recensioni SET approvata = 1 WHERE id = ?");
-    } else {
-        $stmt = $conn->prepare("DELETE FROM recensioni WHERE id = ?");
-    }
-    $stmt->bind_param("i", $id_rec);
-    $stmt->execute();
-    $stmt->close();
-    aggiornaIndexRecensioni($conn);
-
-    header("Location: admin_recensioni_hub.php");
-    exit;
 }
 
 // --- LOGICA 2: PREPARAZIONE LISTA INVIO ---
 $step       = (isset($_POST['step']) && $_POST['step'] === 'conferma') ? 'conferma' : 'selezione';
 $lista_invio = [];
 
-if ($step == 'conferma' && $_SERVER["REQUEST_METHOD"] == "POST") {
+if ($step === 'conferma' && $_SERVER["REQUEST_METHOD"] === "POST") {
+    require_csrf_token();
 
-    if (isset($_POST['tipo_invio']) && $_POST['tipo_invio'] == 'manuale') {
-        $nome  = htmlspecialchars($_POST['manual_nome']);
-        $email = htmlspecialchars($_POST['manual_email']);
-        if (!empty($nome) && !empty($email)) {
+    if (isset($_POST['tipo_invio']) && $_POST['tipo_invio'] === 'manuale') {
+        $nome  = trim($_POST['manual_nome'] ?? '');
+        $email = trim($_POST['manual_email'] ?? '');
+        if ($nome !== '' && filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $lista_invio[] = ['nome' => $nome, 'email' => $email, 'tipo' => 'Manuale'];
         }
 
@@ -54,7 +50,7 @@ if ($step == 'conferma' && $_SERVER["REQUEST_METHOD"] == "POST") {
             $stmt->bind_param("i", $id);
             $stmt->execute();
             $res = $stmt->get_result();
-            if ($res->num_rows > 0) {
+            if ($res && $res->num_rows > 0) {
                 $r = $res->fetch_assoc();
                 $lista_invio[] = ['nome' => $r['nome'], 'email' => $r['email'], 'tipo' => 'Auto (Controllo)'];
             }
@@ -66,6 +62,7 @@ if ($step == 'conferma' && $_SERVER["REQUEST_METHOD"] == "POST") {
 <!DOCTYPE html>
 <html lang="it">
 <head>
+    <link rel="icon" type="image/png" href="img/logo.svg">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Hub Recensioni</title>
@@ -85,7 +82,7 @@ if ($step == 'conferma' && $_SERVER["REQUEST_METHOD"] == "POST") {
         /* Form */
         input[type="text"], input[type="email"] { width:100%; padding:12px; margin:5px 0 15px; border:1px solid #ccc; border-radius:8px; font-size:16px; box-sizing:border-box; }
         select { width:100%; padding:12px; margin-bottom:20px; border:1px solid #ccc; border-radius:8px; background:white; font-size:16px; }
-        .btn { background:#668073; color:white; padding:15px 20px; border:none; cursor:pointer; font-weight:bold; border-radius:8px; width:100%; margin-top:auto; font-size:1rem; transition:background 0.2s; text-align:center; text-decoration:none; display:inline-block; }
+        .btn { background:#668073; color:white; padding:15px 20px; border:none; cursor:pointer; font-weight:bold; border-radius:8px; width:100%; margin-top:auto; font-size:1rem; transition:background 0.2s; text-align:center; text-decoration:none; display:inline-block; font-family:inherit; }
         .btn:hover { background:#556b60; }
         .btn-confirm { background:#2e7d32; }
         .btn-cancel  { flex:1; background:#e0e0e0; color:#333; text-align:center; padding:15px; border-radius:8px; text-decoration:none; font-weight:bold; display:flex; align-items:center; justify-content:center; }
@@ -104,8 +101,8 @@ if ($step == 'conferma' && $_SERVER["REQUEST_METHOD"] == "POST") {
         .approval-stars   { color:#f1c40f; letter-spacing:2px; }
         .approval-text    { font-style:italic; color:#555; line-height:1.5; background:#fafafa; padding:10px; border-radius:8px; margin-bottom:15px; }
         .approval-actions { display:flex; gap:10px; }
-        .btn-approve  { background:#27ae60; flex:1; color:white; padding:10px; border-radius:6px; text-decoration:none; text-align:center; font-weight:bold; font-size:0.9rem; }
-        .btn-delete   { background:#c0392b; flex:1; color:white; padding:10px; border-radius:6px; text-decoration:none; text-align:center; font-weight:bold; font-size:0.9rem; }
+        .btn-approve  { background:#27ae60; flex:1; color:white; padding:10px; border-radius:6px; text-decoration:none; text-align:center; font-weight:bold; font-size:0.9rem; font-family:inherit; border:none; cursor:pointer; }
+        .btn-delete   { background:#c0392b; flex:1; color:white; padding:10px; border-radius:6px; text-decoration:none; text-align:center; font-weight:bold; font-size:0.9rem; font-family:inherit; border:none; cursor:pointer; }
         .btn-delete-full { flex:auto; width:100%; }
 
         /* Tabella anteprima */
@@ -122,7 +119,7 @@ if ($step == 'conferma' && $_SERVER["REQUEST_METHOD"] == "POST") {
 <?php include 'admin_topbar.php'; ?>
 <div class="container">
 
-<?php if ($step == 'selezione'): ?>
+<?php if ($step === 'selezione'): ?>
 
     <?php
     // --- SEZIONE: Recensioni in attesa di approvazione ---
@@ -144,19 +141,27 @@ if ($step == 'conferma' && $_SERVER["REQUEST_METHOD"] == "POST") {
             ?>
             <div class="approval-card">
                 <div class="approval-header">
-                    <div class="approval-author"><?php echo htmlspecialchars($rev['nome']); ?></div>
+                    <div class="approval-author"><?php echo htmlspecialchars($rev['nome'], ENT_QUOTES, 'UTF-8'); ?></div>
                     <div class="approval-stars"><?php echo $stars; ?></div>
                 </div>
-                <div class="approval-text">"<?php echo nl2br(htmlspecialchars($rev['testo'])); ?>"</div>
+                <div class="approval-text">"<?php echo nl2br(htmlspecialchars($rev['testo'], ENT_QUOTES, 'UTF-8')); ?>"</div>
                 <div class="approval-actions">
-                    <a href="?action=delete&id=<?php echo $rev['id']; ?>"
-                       class="btn-delete"
-                       onclick="return confirm('Sei sicura di voler ELIMINARE questa recensione?')">
-                        <i class='bx bx-trash'></i> Rifiuta
-                    </a>
-                    <a href="?action=approve&id=<?php echo $rev['id']; ?>" class="btn-approve">
-                        <i class='bx bx-check-circle'></i> Pubblica
-                    </a>
+                    <form method="POST" style="flex:1; margin:0;" onsubmit="return confirm('Sei sicura di voler ELIMINARE questa recensione?');">
+                        <?php echo csrf_field(); ?>
+                        <input type="hidden" name="id" value="<?php echo (int)$rev['id']; ?>">
+                        <input type="hidden" name="action" value="delete">
+                        <button type="submit" class="btn-delete" style="width:100%;">
+                            <i class='bx bx-trash'></i> Rifiuta
+                        </button>
+                    </form>
+                    <form method="POST" style="flex:1; margin:0;">
+                        <?php echo csrf_field(); ?>
+                        <input type="hidden" name="id" value="<?php echo (int)$rev['id']; ?>">
+                        <input type="hidden" name="action" value="approve">
+                        <button type="submit" class="btn-approve" style="width:100%;">
+                            <i class='bx bx-check-circle'></i> Pubblica
+                        </button>
+                    </form>
                 </div>
             </div>
             <?php endwhile; ?>
@@ -185,16 +190,19 @@ if ($step == 'conferma' && $_SERVER["REQUEST_METHOD"] == "POST") {
                 ?>
                 <div class="approval-card approved">
                     <div class="approval-header">
-                        <div class="approval-author"><?php echo htmlspecialchars($rev['nome']); ?></div>
+                        <div class="approval-author"><?php echo htmlspecialchars($rev['nome'], ENT_QUOTES, 'UTF-8'); ?></div>
                         <div class="approval-stars"><?php echo $stars; ?></div>
                     </div>
-                    <div class="approval-text">"<?php echo nl2br(htmlspecialchars($rev['testo'])); ?>"</div>
+                    <div class="approval-text">"<?php echo nl2br(htmlspecialchars($rev['testo'], ENT_QUOTES, 'UTF-8')); ?>"</div>
                     <div class="approval-actions">
-                        <a href="?action=delete&id=<?php echo $rev['id']; ?>"
-                           class="btn-delete btn-delete-full"
-                           onclick="return confirm('Vuoi cancellare questa recensione dal sito?')">
-                            <i class='bx bx-trash'></i> Elimina
-                        </a>
+                        <form method="POST" style="width:100%; margin:0;" onsubmit="return confirm('Vuoi cancellare questa recensione dal sito?');">
+                            <?php echo csrf_field(); ?>
+                            <input type="hidden" name="id" value="<?php echo (int)$rev['id']; ?>">
+                            <input type="hidden" name="action" value="delete">
+                            <button type="submit" class="btn-delete btn-delete-full">
+                                <i class='bx bx-trash'></i> Elimina
+                            </button>
+                        </form>
                     </div>
                 </div>
                 <?php endwhile; ?>
@@ -212,6 +220,7 @@ if ($step == 'conferma' && $_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="option-title"><i class='bx bx-radar'></i> Invio Automatico</div>
             <p style="font-size:0.9rem; color:#666; flex-grow:1;">Pazienti venuti oggi per un controllo.</p>
             <form method="POST">
+                <?php echo csrf_field(); ?>
                 <input type="hidden" name="step" value="conferma">
                 <input type="hidden" name="tipo_invio" value="auto">
                 <div class="scroll-list">
@@ -229,10 +238,11 @@ if ($step == 'conferma' && $_SERVER["REQUEST_METHOD"] == "POST") {
 
                     if ($res_oggi->num_rows > 0) {
                         while ($row = $res_oggi->fetch_assoc()) {
-                            $n = htmlspecialchars($row['nome']);
-                            $e = htmlspecialchars($row['email']);
+                            $n = htmlspecialchars($row['nome'], ENT_QUOTES, 'UTF-8');
+                            $e = htmlspecialchars($row['email'], ENT_QUOTES, 'UTF-8');
+                            $row_id = (int)$row['id'];
                             echo "<div class='paziente-row'>
-                                    <input type='checkbox' name='ids[]' value='{$row['id']}' checked>
+                                    <input type='checkbox' name='ids[]' value='{$row_id}' checked>
                                     <div><strong>$n</strong><br><small>$e</small></div>
                                   </div>";
                         }
@@ -249,6 +259,7 @@ if ($step == 'conferma' && $_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="option-box">
             <div class="option-title"><i class='bx bx-user'></i> Invio Manuale</div>
             <form method="POST">
+                <?php echo csrf_field(); ?>
                 <input type="hidden" name="step" value="conferma">
                 <input type="hidden" name="tipo_invio" value="manuale">
 
@@ -266,8 +277,8 @@ if ($step == 'conferma' && $_SERVER["REQUEST_METHOD"] == "POST") {
                     $stmt_cli->close();
 
                     while ($cl = $res_cli->fetch_assoc()) {
-                        $ns = htmlspecialchars($cl['nome']);
-                        $es = htmlspecialchars($cl['email']);
+                        $ns = htmlspecialchars($cl['nome'], ENT_QUOTES, 'UTF-8');
+                        $es = htmlspecialchars($cl['email'], ENT_QUOTES, 'UTF-8');
                         echo "<option value='$ns' data-email='$es'>$ns</option>";
                     }
                     ?>
@@ -289,7 +300,7 @@ if ($step == 'conferma' && $_SERVER["REQUEST_METHOD"] == "POST") {
 
     </div><!-- fine option-grid -->
 
-<?php elseif ($step == 'conferma'): ?>
+<?php elseif ($step === 'conferma'): ?>
 
     <h2 style="color:#668073;">Conferma Invio</h2>
 
@@ -299,17 +310,18 @@ if ($step == 'conferma' && $_SERVER["REQUEST_METHOD"] == "POST") {
             <tbody>
                 <?php foreach ($lista_invio as $p): ?>
                 <tr>
-                    <td><strong><?php echo htmlspecialchars($p['nome']); ?></strong></td>
-                    <td><?php echo htmlspecialchars($p['email']); ?></td>
-                    <td><small><?php echo htmlspecialchars($p['tipo']); ?></small></td>
+                    <td><strong><?php echo htmlspecialchars($p['nome'], ENT_QUOTES, 'UTF-8'); ?></strong></td>
+                    <td><?php echo htmlspecialchars($p['email'], ENT_QUOTES, 'UTF-8'); ?></td>
+                    <td><small><?php echo htmlspecialchars($p['tipo'], ENT_QUOTES, 'UTF-8'); ?></small></td>
                 </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
 
         <form action="processa_invio_recensioni.php" method="POST">
+            <?php echo csrf_field(); ?>
             <input type="hidden" name="pacchetto_dati"
-                   value="<?php echo htmlspecialchars(base64_encode(json_encode($lista_invio))); ?>">
+                   value="<?php echo htmlspecialchars(base64_encode(json_encode($lista_invio)), ENT_QUOTES, 'UTF-8'); ?>">
             <div style="display:flex; gap:10px; margin-top:20px;">
                 <a href="admin_recensioni_hub.php" class="btn-cancel">Annulla</a>
                 <button type="submit" class="btn btn-confirm" style="flex:2;">Invia Mail</button>
@@ -317,7 +329,7 @@ if ($step == 'conferma' && $_SERVER["REQUEST_METHOD"] == "POST") {
         </form>
 
     <?php else: ?>
-        <p style="color:#888;">Nessun destinatario selezionato.</p>
+        <p style="color:#888;">Nessun destinatario selezionato o dati non validi.</p>
         <a href="admin_recensioni_hub.php" class="btn" style="max-width:200px;">Indietro</a>
     <?php endif; ?>
 
