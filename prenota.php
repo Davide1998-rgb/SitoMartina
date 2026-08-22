@@ -26,12 +26,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         redirect_booking_error('Devi accettare la privacy.');
     }
 
-    $nome        = trim($_POST['nome'] ?? '');
-    $email       = trim($_POST['email'] ?? '');
-    $telefono    = trim($_POST['telefono'] ?? '');
-    $servizio    = $_POST['servizio'] ?? '';
-    $data_giorno = $_POST['data'] ?? '';
-    $ora_inizio  = $_POST['ora'] ?? '';
+    $nome            = trim($_POST['nome'] ?? '');
+    $email           = trim($_POST['email'] ?? '');
+    $telefono        = trim($_POST['telefono'] ?? '');
+    $modalita_visita = $_POST['modalita_visita'] ?? '';
+    $servizio        = $_POST['servizio'] ?? '';
+    $data_giorno     = $_POST['data'] ?? '';
+    $ora_inizio      = $_POST['ora'] ?? '';
     $data_inizio = DateTime::createFromFormat('!Y-m-d H:i', "$data_giorno $ora_inizio");
     $errori_data = DateTime::getLastErrors();
 
@@ -41,6 +42,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $nome === '' || strlen($nome) > 150 ||
         !filter_var($email, FILTER_VALIDATE_EMAIL) ||
         $telefono === '' || strlen($telefono) > 40 ||
+        !in_array($modalita_visita, ['online', 'studio'], true) ||
         !in_array($servizio, ['prima_visita', 'controllo'], true) ||
         !$orario_valido
     ) {
@@ -93,10 +95,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     // Inserimento
     $stmt_ins = $conn->prepare(
-        "INSERT INTO prenotazioni (nome, email, telefono, servizio, data_inizio, data_fine, status)
-         VALUES (?, ?, ?, ?, ?, ?, 'in_attesa')"
+        "INSERT INTO prenotazioni (nome, email, telefono, modalita_visita, servizio, data_inizio, data_fine, status)
+         VALUES (?, ?, ?, ?, ?, ?, ?, 'in_attesa')"
     );
-    $stmt_ins->bind_param("ssssss", $nome, $email, $telefono, $servizio, $data_inizio_db, $data_fine_db);
+    $stmt_ins->bind_param("sssssss", $nome, $email, $telefono, $modalita_visita, $servizio, $data_inizio_db, $data_fine_db);
 
     if ($stmt_ins->execute()) {
         $id_prenotazione = $conn->insert_id;
@@ -111,9 +113,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $link_conferma  = BASE_URL . "/conferma.php?id=$id_prenotazione&token=$token_conferma";
         $link_rifiuta   = BASE_URL . "/rifiuta.php?id=$id_prenotazione&token=$token_rifiuta";
 
-        $nome_safe     = htmlspecialchars($nome, ENT_QUOTES, 'UTF-8');
-        $tel_safe      = htmlspecialchars($telefono, ENT_QUOTES, 'UTF-8');
-        $servizio_safe = htmlspecialchars(ucfirst(str_replace('_', ' ', $servizio)), ENT_QUOTES, 'UTF-8');
+        $nome_safe      = htmlspecialchars($nome, ENT_QUOTES, 'UTF-8');
+        $tel_safe       = htmlspecialchars($telefono, ENT_QUOTES, 'UTF-8');
+        $servizio_safe  = htmlspecialchars(ucfirst(str_replace('_', ' ', $servizio)), ENT_QUOTES, 'UTF-8');
+        $modalita_label = $modalita_visita === 'online' ? 'Online' : 'In Studio';
+        $modalita_safe  = htmlspecialchars($modalita_label, ENT_QUOTES, 'UTF-8');
 
         // EMAIL 1: alla dottoressa
         $mail = new PHPMailer(true);
@@ -135,6 +139,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <h2 style='color:#668073;'>Nuova Richiesta</h2>
 <p><strong>Paziente:</strong> $nome_safe</p>
 <p><strong>Servizio:</strong> $servizio_safe</p>
+<p><strong>Modalita:</strong> $modalita_safe</p>
 <p><strong>Data:</strong> $data_it alle $ora_inizio</p>
 <p><strong>Tel:</strong> $tel_safe</p>
 <hr style='border:0;border-top:1px solid #eee;margin:20px 0;'>
@@ -171,7 +176,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <div style='background:#F8F9FA;border-left:4px solid #668073;padding:15px;margin:20px 0;'>
   <p><strong>📅 Data:</strong> $data_it</p>
   <p><strong>🕒 Ora:</strong> $ora_inizio</p>
-  <p><strong>📋 Stato:</strong> <span style='color:#E67E22;font-weight:bold;'>In attesa di conferma</span></p>
+  <p><strong>� Modalita:</strong> $modalita_safe</p>
+  <p><strong>�📋 Stato:</strong> <span style='color:#E67E22;font-weight:bold;'>In attesa di conferma</span></p>
 </div>
 <p style='color:#555;'>Riceverai presto una conferma definitiva.</p>
 </div></div>";

@@ -37,7 +37,7 @@ function getAppuntamenti($conn, $date_string) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Planner Admin</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <style>
         body{font-family:'Montserrat',sans-serif;background:#F0F2F5;margin:0;padding:10px;color:#333;}
@@ -64,6 +64,9 @@ function getAppuntamenti($conn, $date_string) {
         .app-card.prima_visita{border-left-color:#E6B800;} .app-card.in_attesa{border-left-style:dashed;background:#fff5f5;}
         .card-time{font-weight:800;font-size:1rem;color:#333;} .card-name{font-size:0.9rem;font-weight:600;color:#555;}
         .card-service{font-size:0.7rem;text-transform:uppercase;color:#999;margin-top:3px;}
+        .visit-mode{display:inline-flex;align-items:center;gap:4px;font-size:0.65rem;font-weight:700;text-transform:uppercase;padding:3px 7px;border-radius:999px;margin-top:6px;}
+        .visit-mode.online{background:#eaf3ff;color:#1f5fa5;}
+        .visit-mode.studio{background:#eef7f0;color:#3e6a4a;}
         .card-tel a{color:#668073;text-decoration:none;font-size:0.8rem;display:block;margin-top:5px;}
         .badge-attesa{background:#d9534f;color:white;font-size:0.6rem;padding:2px 6px;border-radius:4px;position:absolute;top:10px;right:10px;}
         .btn-gestisci{width:100%;margin-top:8px;background:#d9534f;color:white;border:none;padding:10px;border-radius:5px;cursor:pointer;font-weight:bold;font-family:inherit;font-size:0.85rem;display:flex;align-items:center;justify-content:center;gap:5px;}
@@ -123,6 +126,11 @@ function getAppuntamenti($conn, $date_string) {
                             <div class="card-time"><?php echo htmlspecialchars($ora, ENT_QUOTES, 'UTF-8'); ?></div>
                             <div class="card-name"><?php echo htmlspecialchars($row['nome'], ENT_QUOTES, 'UTF-8'); ?></div>
                             <div class="card-service"><?php echo htmlspecialchars(str_replace('_', ' ', $row['servizio']), ENT_QUOTES, 'UTF-8'); ?></div>
+                            <?php $modalita_visita = ($row['modalita_visita'] ?? 'studio') === 'online' ? 'online' : 'studio'; ?>
+                            <div class="visit-mode <?php echo $modalita_visita; ?>">
+                                <i class='bx <?php echo $modalita_visita === 'online' ? 'bx-laptop' : 'bx-building-house'; ?>'></i>
+                                <?php echo $modalita_visita === 'online' ? 'Online' : 'In studio'; ?>
+                            </div>
                             <div class="card-tel"><a href="tel:<?php echo htmlspecialchars($row['telefono'], ENT_QUOTES, 'UTF-8'); ?>"><i class='bx bxs-phone'></i> <?php echo htmlspecialchars($row['telefono'], ENT_QUOTES, 'UTF-8'); ?></a></div>
                             <?php if ($row['status'] == 'in_attesa'): ?>
                                 <span class="badge-attesa">DA CONFERMARE</span>

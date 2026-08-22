@@ -54,7 +54,7 @@ header .container { display: flex; justify-content: space-between; align-items: 
 .logo-img {
     height: 4.06rem;
     width: auto;
-    filter: drop-shadow(0 0 0.18rem #FBF3E4);
+    filter: none;
     transition: transform 0.3s ease;
 }
 .logo-link:hover .logo-img { transform: rotate(-10deg) scale(1.1); }
@@ -793,9 +793,7 @@ section,
 #chi-sono, 
 #contatti, 
 #prenota {
-    /* Invece di usare vh (percentuale schermo), usiamo un valore fisso */
-    /* 120px è circa l'altezza del menu + un po' di aria */
-    scroll-margin-top: 120px !important; 
+    scroll-margin-top: 96px !important;
 }
 
 /* Su MOBILE il menu è più piccolo, quindi riduciamo lo spazio */
@@ -806,7 +804,7 @@ section,
     #chi-sono, 
     #contatti, 
     #prenota {
-        scroll-margin-top: 100px !important; 
+        scroll-margin-top: 96px !important;
     }
 }
 /* --- AGGIORNAMENTO FOOTER (ALBO & SOCIAL) --- */
@@ -842,7 +840,7 @@ section,
 .social-icons a:hover {
     color: #FBF3E4;         /* Diventa color crema/oro */
     transform: translateY(-3px); /* Saltello verso l'alto */
-    filter: drop-shadow(0 0 5px rgba(255,255,255,0.5)); /* Leggero bagliore */
+    filter: none;
 }
 
 /* Aggiornamento spaziatura link privacy */
@@ -877,6 +875,10 @@ section,
     /* Centra le card se sono poche e non riempiono lo schermo (Opzionale) */
     /* Se hai molte recensioni, meglio lasciarlo disattivato o usare margins auto */
     /* margin: 0 auto; */
+
+    /* Dissolvenza laterale: le card si affievoliscono invece di essere tagliate di netto dal bordo della sezione */
+    -webkit-mask-image: linear-gradient(to right, transparent 0, #000 2.5rem, #000 calc(100% - 2.5rem), transparent 100%);
+    mask-image: linear-gradient(to right, transparent 0, #000 2.5rem, #000 calc(100% - 2.5rem), transparent 100%);
 }
 
 /* Nascondi la barra di scorrimento (estetica più pulita) */
@@ -933,9 +935,25 @@ section,
     color: #555;
     font-style: italic;
     line-height: 1.6;
-    margin-bottom: 1.5rem;
-    flex-grow: 1; /* Spinge l'autore in basso */
+    margin-bottom: 0.6rem;
+
+    /* Altezza fissa: i testi lunghi restano leggibili tramite paginazione (vedi .review-text-nav) invece di stirare la card */
+    height: 8.6rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    column-gap: 0;
+    scroll-behavior: smooth;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
+.review-text::-webkit-scrollbar { display: none; }
+
+.review-text-nav { display: flex; align-items: center; justify-content: center; gap: 0.6rem; min-height: 2rem; margin-bottom: 0.8rem; }
+.review-text-nav.is-hidden { visibility: hidden; }
+.review-page-btn { background: #EEF3F0; border: none; color: #668073; width: 1.8rem; height: 1.8rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.2s, color 0.2s; font-size: 1rem; }
+.review-page-btn:hover:not(:disabled) { background: #668073; color: #fff; }
+.review-page-btn:disabled { opacity: 0.35; cursor: default; }
+.review-page-indicator { font-size: 0.75rem; color: #999; min-width: 2.5rem; text-align: center; }
 
 .review-author {
     display: flex;

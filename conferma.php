@@ -74,7 +74,7 @@ if ($id > 0) {
   </div>
   <p style='color:#555;font-size:0.95rem;'>Se devi disdire, avvisami con almeno 24h di anticipo.</p>
         <a href='$link_annulla' style='display:inline-block;color:#b23b3b;text-decoration:underline;margin-top:10px;'>Annulla appuntamento</a><br>
-    <a href='https://wa.me/393331909733' style='display:inline-block;background:#668073;color:white;text-decoration:none;padding:12px 25px;border-radius:50px;font-weight:bold;margin-top:20px;'>Contattami su WhatsApp</a>
+    <a href='https://wa.me/393331909773' style='display:inline-block;background:#668073;color:white;text-decoration:none;padding:12px 25px;border-radius:50px;font-weight:bold;margin-top:20px;'>Contattami su WhatsApp</a>
 </div>
 </div>";
 

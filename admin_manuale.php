@@ -16,6 +16,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $telefono = trim($_POST['telefono'] ?? '');
     $data     = trim($_POST['data'] ?? '');
     $ora      = trim($_POST['ora'] ?? '');
+    $modalita_visita = in_array($_POST['modalita_visita'] ?? '', ['studio', 'online'], true) ? $_POST['modalita_visita'] : 'studio';
     $servizio = in_array($_POST['servizio'] ?? '', ['prima_visita', 'controllo'], true) ? $_POST['servizio'] : 'controllo';
 
     $data_valida = DateTime::createFromFormat('!Y-m-d H:i', "$data $ora");
@@ -30,10 +31,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $data_fine   = (clone $data_valida)->modify("+$durata minutes")->format('Y-m-d H:i:s');
 
         $stmt = $conn->prepare(
-            "INSERT INTO prenotazioni (nome, email, telefono, servizio, data_inizio, data_fine, status)
-             VALUES (?, ?, ?, ?, ?, ?, 'confermata')"
+            "INSERT INTO prenotazioni (nome, email, telefono, modalita_visita, servizio, data_inizio, data_fine, status)
+             VALUES (?, ?, ?, ?, ?, ?, ?, 'confermata')"
         );
-        $stmt->bind_param("ssssss", $nome, $email, $telefono, $servizio, $data_inizio, $data_fine);
+        $stmt->bind_param("sssssss", $nome, $email, $telefono, $modalita_visita, $servizio, $data_inizio, $data_fine);
 
         if ($stmt->execute()) {
             $messaggio = "<div style='color:green; font-weight:bold; background:#e8f5e9; padding:10px; border-radius:5px; margin-bottom:15px;'>
@@ -56,7 +57,7 @@ $conn->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inserimento Manuale</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <style>
         body { font-family:'Montserrat',sans-serif; background:#F0F2F5; padding:20px; }
         .container { max-width:500px; margin:0 auto; background:white; padding:30px; border-radius:10px; box-shadow:0 5px 15px rgba(0,0,0,0.1); }
@@ -84,7 +85,13 @@ $conn->close();
             <input type="email" name="email" placeholder="email@esempio.com">
 
             <label>Telefono</label>
-            <input type="tel" name="telefono" required placeholder="Es. 3471234567">
+            <input type="tel" name="telefono" required placeholder="Es. 3331909773">
+
+            <label>Modalita</label>
+            <select name="modalita_visita">
+                <option value="studio">In Studio</option>
+                <option value="online">Online</option>
+            </select>
 
             <label>Tipo Visita</label>
             <select name="servizio">

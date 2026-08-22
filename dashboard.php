@@ -24,7 +24,7 @@ if ($conteggio_richieste) {
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Dashboard">
     
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Pinyon+Script&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 
     <style>
@@ -83,7 +83,7 @@ if ($conteggio_richieste) {
             background: #E8F5E9; width: 70px; height: 70px;
             display: flex; align-items: center; justify-content: center; border-radius: 50%;
         }
-        .admin-card h3 { margin: 0 0 0.5rem 0; font-size: 1.2rem; color: #1A2621; font-weight: 600; font-family: 'Playfair Display', Georgia, serif; }
+        .admin-card h3 { margin: 0 0 0.5rem 0; font-size: 1.2rem; color: #1A2621; font-weight: 600; font-family: 'Playfair Display', serif; }
         .admin-card p { margin: 0; font-size: 0.85rem; color: #888; font-family: 'Montserrat', sans-serif; }
 
         @media (max-width: 480px) {

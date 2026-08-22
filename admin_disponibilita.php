@@ -97,11 +97,11 @@ $tipiNomi = ['giorno' => 'Giorno singolo', 'periodo' => 'Periodo', 'fascia' => '
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Disponibilità calendario - Admin</title>
     <link rel="stylesheet" href="admin.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
     <style>
         body { padding: 20px; font-family:'Montserrat', sans-serif !important; }
-        .availability-panel h1, .availability-panel h2 { font-family:'Playfair Display', Georgia, serif; }
+        .availability-panel h1, .availability-panel h2 { font-family:'Playfair Display', serif; }
         .availability-layout { max-width: 1100px; margin: 0 auto; }
         .availability-panel { background:#fff; padding:1.5rem; margin-bottom:1.5rem; }
         .availability-panel h1, .availability-panel h2 { margin-top:0; }

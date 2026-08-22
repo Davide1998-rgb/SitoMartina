@@ -21,7 +21,7 @@ body {
     color: var(--admin-ink) !important;
 }
 
-h1, h2, h3, h4 { font-family: 'Playfair Display', Georgia, serif; }
+h1, h2, h3, h4 { font-family: 'Playfair Display', serif; }
 
 button,
 a,
@@ -359,15 +359,15 @@ textarea:focus {
 .email-preview-meta span { overflow-wrap: anywhere; color: var(--admin-ink); font-size: 0.85rem; }
 .email-preview-body { padding: 2rem 1.25rem 1.25rem; border-top: 4px solid var(--admin-green); border-radius: var(--admin-radius); background: #FBF3E4; text-align: center; }
 .email-preview-brand { margin: 0 0 0.75rem; color: var(--admin-green); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.12rem; text-transform: uppercase; }
-.email-preview-body h3 { margin: 0 0 0.4rem; color: var(--admin-ink); font-family: Georgia, serif; font-size: 1.75rem; }
-.email-preview-lead { margin: 0 0 1.5rem; color: var(--admin-green); font-family: Georgia, serif; font-style: italic; }
+.email-preview-body h3 { margin: 0 0 0.4rem; color: var(--admin-ink); font-family: 'Playfair Display', serif; font-size: 1.75rem; }
+.email-preview-lead { margin: 0 0 1.5rem; color: var(--admin-green); font-family: 'Playfair Display', serif; font-style: italic; }
 .email-preview-message { margin: 0 auto 1.25rem; max-width: 560px; padding: 1rem; border-left: 4px solid var(--admin-green); border-radius: 10px; background: #F8FBF9; color: #4A4A4A; line-height: 1.6; text-align: left; white-space: pre-wrap; overflow-wrap: anywhere; }
 .email-preview-attachment { max-width: 560px; margin: 0 auto; padding: 1rem; border-radius: 10px; background: #FFFFFF; text-align: left; }
 .email-preview-attachment strong,
 .email-preview-attachment span { display: block; }
 .email-preview-attachment strong { color: var(--admin-ink); }
 .email-preview-attachment span { margin-top: 0.25rem; color: var(--admin-green); font-size: 0.8rem; }
-.email-preview-signature { margin: 1.5rem 0 0; color: var(--admin-green); font-family: Georgia, serif; font-style: italic; line-height: 1.5; }
+.email-preview-signature { margin: 1.5rem 0 0; color: var(--admin-green); font-family: 'Playfair Display', serif; font-style: italic; line-height: 1.5; }
 .email-preview-actions { justify-content: flex-end; margin-top: 1rem; }
 
 @media (max-width: 600px) {

@@ -6,7 +6,7 @@ require_once 'db_connect.php';
 date_default_timezone_set('Europe/Rome');
 
 $result = $conn->query(
-    "SELECT id, nome, email, telefono, servizio, data_inizio, data_fine, status
+    "SELECT id, nome, email, telefono, modalita_visita, servizio, data_inizio, data_fine, status
      FROM prenotazioni
      ORDER BY data_inizio DESC"
 );
@@ -18,7 +18,7 @@ header('X-Content-Type-Options: nosniff');
 
 $output = fopen('php://output', 'wb');
 fwrite($output, "\xEF\xBB\xBF");
-fputcsv($output, ['ID', 'Nome', 'Email', 'Telefono', 'Servizio', 'Inizio', 'Fine', 'Stato'], ';');
+fputcsv($output, ['ID', 'Nome', 'Email', 'Telefono', 'Modalita', 'Servizio', 'Inizio', 'Fine', 'Stato'], ';');
 
 if ($result) {
     while ($row = $result->fetch_assoc()) {

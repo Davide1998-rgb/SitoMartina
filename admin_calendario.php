@@ -42,7 +42,7 @@ $stmt_mese->close();
     <meta charset="UTF-8">
     <title>Calendario Mensile - Admin</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <style>
         body { font-family: 'Montserrat', sans-serif; background: #F0F2F5; margin: 0; padding: 20px; }
@@ -89,8 +89,10 @@ $stmt_mese->close();
         .dot.confermata { background: #668073; }
         .dot.in_attesa { background: #E6B800; }
         .dot.cancellata { background: #d9534f; }
+        .dot.online { box-shadow: 0 0 0 2px #1f5fa5 inset; }
 
         .count-text { font-size: 0.8rem; color: #888; margin-top: 5px; font-weight: 600; }
+        .online-count { font-size: 0.72rem; color: #1f5fa5; margin-top: 3px; font-weight: 700; text-transform: uppercase; }
 
         /* MODALE GENERALE */
         .modal-overlay {
@@ -180,7 +182,13 @@ $stmt_mese->close();
             
             $visite_giorno = isset($appuntamenti_per_giorno[$g]) ? $appuntamenti_per_giorno[$g] : [];
             $numero_visite = count($visite_giorno);
-            
+            $numero_online = 0;
+            foreach ($visite_giorno as $visit_tmp) {
+                if (($visit_tmp['modalita_visita'] ?? 'studio') === 'online') {
+                    $numero_online++;
+                }
+            }
+
             // Prepariamo i dati JSON sicuri per il JS
             $json_giorno = htmlspecialchars(json_encode($visite_giorno, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP), ENT_QUOTES, 'UTF-8');
         ?>
@@ -190,10 +198,14 @@ $stmt_mese->close();
                 <?php if($numero_visite > 0): ?>
                     <div class="dots-container">
                         <?php foreach($visite_giorno as $v): ?>
-                            <div class="dot <?php echo htmlspecialchars($v['status'], ENT_QUOTES, 'UTF-8'); ?>"></div>
+                            <?php $classe_online = (($v['modalita_visita'] ?? 'studio') === 'online') ? 'online' : ''; ?>
+                            <div class="dot <?php echo htmlspecialchars($v['status'], ENT_QUOTES, 'UTF-8'); ?> <?php echo $classe_online; ?>"></div>
                         <?php endforeach; ?>
                     </div>
                     <div class="count-text"><?php echo $numero_visite; ?> Visite</div>
+                    <?php if ($numero_online > 0): ?>
+                        <div class="online-count"><?php echo $numero_online; ?> online</div>
+                    <?php endif; ?>
                 <?php else: ?>
                     <div class="count-text" style="opacity:0.3;">Libero</div>
                 <?php endif; ?>
@@ -307,13 +319,15 @@ $stmt_mese->close();
                     let nomeSafe = escapeHtml(v.nome || '');
                     let servizioSafe = escapeHtml((v.servizio || '').replace(/_/g, ' '));
                     let telefonoSafe = escapeHtml(v.telefono || '');
+                    let modalitaVisita = (v.modalita_visita === 'online') ? 'Online' : 'In studio';
+                    let modalitaIcon = (v.modalita_visita === 'online') ? 'bx-laptop' : 'bx-building-house';
 
                     let itemDiv = document.createElement('div');
                     itemDiv.className = 'list-item ' + statusSafe;
                     itemDiv.innerHTML = `
                         <div class="item-info">
                             <strong>${ora} - ${nomeSafe}</strong>
-                            <span>${servizioSafe} • ${telefonoSafe}</span>
+                            <span>${servizioSafe} • ${telefonoSafe} • <i class='bx ${modalitaIcon}'></i> ${modalitaVisita}</span>
                         </div>
                         <button type="button" class="btn-gestisci" data-index="${index}">Gestisci</button>
                     `;

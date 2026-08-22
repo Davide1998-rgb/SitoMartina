@@ -40,6 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['action']) && isset($_
                 $email_cliente = $pren['email'];
                 $data_human    = date("d/m/Y", strtotime($pren['data_inizio']));
                 $ora_human     = date("H:i",   strtotime($pren['data_inizio']));
+                $modalita_label = (($pren['modalita_visita'] ?? 'studio') === 'online') ? 'Online (videochiamata)' : 'In studio - Corso della Repubblica, 5 - Cassino';
 
                 $mail = new PHPMailer(true);
                 try {
@@ -57,20 +58,20 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['action']) && isset($_
                     $mail->isHTML(true);
                     $mail->Subject = "✅ Appuntamento Confermato - Dott.ssa Violo";
                     $mail->Body    = "
-                    <div style='background-color:#FBF3E4;padding:40px;font-family:Helvetica,Arial,sans-serif;'>
+                    <div style="background-color:#FBF3E4;padding:40px;font-family:'Montserrat',sans-serif;">
                     <div style='max-width:600px;margin:0 auto;background:#FFFFFF;border-radius:15px;padding:30px;text-align:center;'>
                       <div style='background-color:#e8f5e9;color:#668073;width:60px;height:60px;line-height:60px;border-radius:50%;display:inline-block;font-size:30px;'>✔</div>
-                      <h1 style='color:#668073;font-family:Georgia,serif;'>Confermato!</h1>
+                      <h1 style="color:#668073;font-family:'Playfair Display',serif;">Confermato!</h1>
                       <p style='color:#1A2621;'>Ciao $nome_safe, il tuo appuntamento è stato fissato in agenda.</p>
                       <div style='background:#FBF3E4;border-radius:10px;padding:20px;margin:30px 0;text-align:left;'>
                         <p style='color:#668073;font-size:0.9rem;text-transform:uppercase;font-weight:bold;'>Dettagli Appuntamento</p>
                         <hr style='border:0;border-top:1px solid #dcdcdc;margin:10px 0;'>
                         <p style='color:#1A2621;'><strong>📅 Quando:</strong> $data_human</p>
                         <p style='color:#1A2621;'><strong>🕒 Ora:</strong> $ora_human</p>
-                        <p style='color:#1A2621;'><strong>📍 Dove:</strong> Corso della Repubblica, 5 - Cassino</p>
+                        <p style='color:#1A2621;'><strong>📍 Modalita:</strong> $modalita_label</p>
                       </div>
                       <p style='color:#555;font-size:0.95rem;'>Se devi disdire, avvisami con almeno 24h di anticipo.</p>
-                      <a href='https://wa.me/393331909733' style='display:inline-block;background:#668073;color:white;text-decoration:none;padding:12px 25px;border-radius:50px;font-weight:bold;margin-top:20px;'>Contattami su WhatsApp</a>
+                      <a href='https://wa.me/393331909773' style='display:inline-block;background:#668073;color:white;text-decoration:none;padding:12px 25px;border-radius:50px;font-weight:bold;margin-top:20px;'>Contattami su WhatsApp</a>
                     </div>
                     </div>";
 
@@ -132,7 +133,7 @@ $stmt_list->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Richieste in Attesa - Dott.ssa Martina Violo</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <style>
         body {
@@ -237,6 +238,7 @@ $stmt_list->close();
                             <th>Azione</th>
                             <th>Data & Ora</th>
                             <th>Servizio</th>
+                            <th>Modalita</th>
                             <th>Paziente</th>
                             <th>Email / Tel</th>
                             <th>WhatsApp</th>
@@ -250,6 +252,7 @@ $stmt_list->close();
                                     $numero_whatsapp = '39' . $numero_whatsapp;
                                 }
                                 $servizio_label = $row['servizio'] === 'prima_visita' ? 'Prima visita' : 'Controllo';
+                                $modalita_label = (($row['modalita_visita'] ?? 'studio') === 'online') ? 'Online' : 'In studio';
                             ?>
                             <tr>
                                 <td>
@@ -277,6 +280,12 @@ $stmt_list->close();
                                     <small style="color:#888;"><?= date("H:i", strtotime($row['data_inizio'])) ?> - <?= date("H:i", strtotime($row['data_fine'])) ?></small>
                                 </td>
                                 <td><?= htmlspecialchars($servizio_label, ENT_QUOTES, 'UTF-8') ?></td>
+                                <td>
+                                    <small style="display:inline-flex;align-items:center;gap:5px;background:#f1f6ff;color:#1f5fa5;padding:0.3rem 0.6rem;border-radius:999px;font-weight:600;">
+                                        <i class='bx <?= ($modalita_label === 'Online') ? 'bx-laptop' : 'bx-building-house' ?>'></i>
+                                        <?= htmlspecialchars($modalita_label, ENT_QUOTES, 'UTF-8') ?>
+                                    </small>
+                                </td>
                                 <td><strong><?= htmlspecialchars($row['nome'], ENT_QUOTES, 'UTF-8') ?></strong></td>
                                 <td>
                                     <?= htmlspecialchars($row['email'], ENT_QUOTES, 'UTF-8') ?><br>

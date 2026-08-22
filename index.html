@@ -97,13 +97,13 @@
 }
 
 /* --- APPROCCIO: lista puntata dettagliata --- */
-.approccio-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
+.approccio-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: stretch; }
 .approccio-intro p { color: #555; line-height: 1.8; margin-bottom: 1.5rem; }
 .approccio-list { list-style: none; padding: 0; margin: 0; }
 .approccio-list li { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.7rem 0; border-bottom: 1px solid #f0f0f0; font-size: 0.95rem; color: #444; }
 .approccio-list li:last-child { border-bottom: none; }
 .approccio-list li i { color: #668073; font-size: 1.1rem; flex-shrink: 0; margin-top: 0.1rem; }
-.approccio-photo { border-radius: 1.5rem; overflow: hidden; box-shadow: 0 1rem 2.5rem rgba(0,0,0,0.08); }
+.approccio-photo { border-radius: 1.5rem; overflow: hidden; box-shadow: 0 1rem 2.5rem rgba(0,0,0,0.08); height: 100%; max-height: 34rem; }
 .approccio-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
 @media (max-width: 900px) {
     .approccio-grid { grid-template-columns: 1fr; }
@@ -146,7 +146,14 @@
 .review-card { background: #fff; border-radius: 1.25rem; padding: 2rem; box-shadow: 0 4px 15px rgba(0,0,0,0.05); flex-shrink: 0; width: 340px; display: flex; flex-direction: column; border-left: 4px solid #668073; }
 .review-quote { font-size: 2.5rem; color: #668073; line-height: 1; margin-bottom: 0.5rem; font-family: Georgia, serif; }
 .review-quote-close { text-align: right; margin: -0.4rem 0 0.5rem; }
-.review-text { font-size: 0.92rem; color: #555; line-height: 1.7; flex-grow: 1; font-style: italic; margin-bottom: 1.2rem; }
+.review-text { font-size: 0.92rem; color: #555; line-height: 1.7; font-style: italic; margin-bottom: 0.6rem; height: 8.6rem; overflow-x: auto; overflow-y: hidden; column-gap: 0; scroll-behavior: smooth; -ms-overflow-style: none; scrollbar-width: none; }
+.review-text::-webkit-scrollbar { display: none; }
+.review-text-nav { display: flex; align-items: center; justify-content: center; gap: 0.6rem; min-height: 2rem; margin-bottom: 0.8rem; }
+.review-text-nav.is-hidden { visibility: hidden; }
+.review-page-btn { background: #EEF3F0; border: none; color: #668073; width: 1.8rem; height: 1.8rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.2s, color 0.2s; font-size: 1rem; }
+.review-page-btn:hover:not(:disabled) { background: #668073; color: #fff; }
+.review-page-btn:disabled { opacity: 0.35; cursor: default; }
+.review-page-indicator { font-size: 0.75rem; color: #999; min-width: 2.5rem; text-align: center; }
 .review-author { display: flex; align-items: center; gap: 0.8rem; }
 .author-avatar { width: 2.5rem; height: 2.5rem; border-radius: 50%; background: #668073; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1rem; flex-shrink: 0; }
 .author-info h4 { font-size: 0.9rem; color: #1A2621; margin: 0 0 0.15rem; }
@@ -175,7 +182,7 @@
                 <li><a href="chi-sono.html">Chi Sono</a></li>
                 <li><a href="#specializzazioni">Specializzazioni</a></li>
                 <li><a href="#recensioni">Recensioni</a></li>
-                <li><a href="#contatti">Dove Siamo</a></li>
+                <li><a href="#contatti">Dove Sono</a></li>
                 <li><a href="#prenota" class="btn-prenota">Prenota Ora</a></li>
             </ul>
         </nav>
@@ -197,7 +204,9 @@
                 <span><strong>Recensioni verificate</strong> dai pazienti</span>
             </div>
 
-            <p>Percorsi nutrizionali personalizzati per ritrovare equilibrio, salute e benessere. Niente diete drastiche: solo scienza, ascolto e risultati duraturi.</p>
+            <p><strong>Nutrizione personalizzata, ascolto e cura della persona.</strong></p>
+
+            <p>Un percorso costruito insieme, partendo dalle tue esigenze, dalle tue abitudini e dagli obiettivi che vuoi raggiungere.</p>
 
             <div class="hero-buttons">
                 <a href="#prenota" class="btn btn-hero">Prenota la Prima Visita</a>
@@ -212,17 +221,11 @@
     </div>
 </section>
 
-<div class="marquee-container">
-    <div class="marquee-content">
-        <span>NUTRIZIONE CONSAPEVOLE • NO DIETE DRASTICHE • EQUILIBRIO • AMORE PER IL CIBO • SCIENZA ED EMPATIA • </span>
-        <span>NUTRIZIONE CONSAPEVOLE • NO DIETE DRASTICHE • EQUILIBRIO • AMORE PER IL CIBO • SCIENZA ED EMPATIA • </span>
-    </div>
-</div>
 
 <!-- ============================================================
      2. CHI SONO — foto + testo affiancati (come sito riferimento)
      ============================================================ -->
-<section id="chi-sono" class="section-content">
+<section id="chi-sono" class="section-content" style="background-color:#f9f9f9;">
     <div class="container">
         <div class="chi-sono-grid" data-aos="fade-up">
             <div>
@@ -232,15 +235,20 @@
                 <span class="header-badge">Chi sono</span>
                 <h2>Benvenuta nel mio studio di nutrizione, il tuo spazio di equilibrio e benessere.</h2>
                 <p>
-                    Sono una <strong>biologa nutrizionista</strong>, appassionata di scienza, benessere e cura della persona.
-                    Credo profondamente che l'alimentazione non sia solo nutrimento, ma uno strumento potente
-                    per migliorare la qualità della vita e ritrovare equilibrio e salute.
+                    Sono Martina e sono una <strong>Biologa Nutrizionista</strong>.
                 </p>
                 <p>
-                    Il mio approccio è scientifico ma profondamente umano: prima di parlare di calorie,
-                    voglio capire te — le tue abitudini, i tuoi ritmi, le tue difficoltà.
-                    Solo così un piano nutrizionale smette di essere un peso e diventa uno strumento
-                    che funziona davvero, nel tempo.
+                    Credo che un percorso nutrizionale efficace inizi dalla conoscenza e dall'ascolto. Dalla tua storia,
+                    dalle tue abitudini, dai tuoi ritmi, dalle tue esigenze e dagli obiettivi che vuoi raggiungere.
+                </p>
+                <p>
+                    Per questo ogni percorso che costruisco parte da te. Non da schemi prestabiliti, ma dalla volontà di
+                    trovare insieme un modo di vivere l'alimentazione che sia in equilibrio con la tua salute, con il tuo
+                    benessere e con la tua quotidianità.
+                </p>
+                <p>
+                    Il mio obiettivo è accompagnarti con competenza e attenzione, fornendoti strumenti concreti per
+                    costruire nel tempo un rapporto più consapevole e sereno con l'alimentazione
                 </p>
                 <a href="chi-sono.html" class="btn" style="display:inline-block; margin-top:1rem;">Scopri di più →</a>
             </div>
@@ -251,7 +259,7 @@
 <!-- ============================================================
      3. IL MIO APPROCCIO — lista dettagliata + foto
      ============================================================ -->
-<section class="section-content" style="background-color:#f9f9f9;">
+<section class="section-content">
     <div class="container">
         <h2 data-aos="fade-up">Il Mio Approccio</h2>
         <p style="text-align:center; max-width:600px; margin:0 auto 3rem; color:#666;" data-aos="fade-up" data-aos-delay="100">
@@ -282,43 +290,61 @@
 <!-- ============================================================
      4. SPECIALIZZAZIONI — griglia 3+3 con icone
      ============================================================ -->
-<section id="specializzazioni" class="section-content">
+<section id="specializzazioni" class="section-content" style="background-color:#f9f9f9;">
     <div class="container">
         <h2 data-aos="fade-up">In cosa posso aiutarti</h2>
         <p style="text-align:center; max-width:600px; margin:0 auto 3rem; color:#666;" data-aos="fade-up" data-aos-delay="100">
-            Percorsi personalizzati per ogni fase della vita e ogni tipo di esigenza nutrizionale.
+            La nutrizione può accompagnarti in ogni fase della vita: per stare bene, migliorare il tuo rapporto con il cibo,
+            raggiungere un obiettivo o affrontare esigenze nutrizionali specifiche.<br>
+            Ogni percorso nasce dall'ascolto della persona e viene costruito sulle sue necessità, sullo stile di vita e sugli
+            obiettivi individuali.
         </p>
 
         <div class="specializzazioni-grid">
             <div class="spec-card" data-aos="fade-up">
                 <div class="spec-icon"><i class='bx bx-leaf'></i></div>
-                <h3>Dimagrimento e ricomposizione corporea</h3>
-                <p>Programmi basati su evidenze scientifiche per perdere massa grassa in modo sano, sostenibile e duraturo.</p>
-            </div>
-            <div class="spec-card" data-aos="fade-up" data-aos-delay="100">
-                <div class="spec-icon"><i class='bx bx-heart'></i></div>
-                <h3>Squilibri metabolici</h3>
-                <p>Supporto nutrizionale per insulino resistenza, diabete, ipercolesterolemia e stati infiammatori cronici.</p>
-            </div>
-            <div class="spec-card" data-aos="fade-up" data-aos-delay="200">
-                <div class="spec-icon"><i class='bx bx-happy-heart-eyes'></i></div>
-                <h3>Benessere intestinale</h3>
-                <p>Percorsi per IBS, gonfiore, stipsi, disbiosi intestinale e reflusso, con focus sul microbiota.</p>
+                <h3>Alimentazione e benessere</h3>
+                <p>Un percorso per chi desidera semplicemente mangiare meglio, migliorare le proprie abitudini alimentari e imparare a costruire un'alimentazione varia, equilibrata e adatta al proprio stile di vita, anche in assenza di particolari problematiche.</p>
             </div>
             <div class="spec-card" data-aos="fade-up" data-aos-delay="100">
                 <div class="spec-icon"><i class='bx bx-body'></i></div>
-                <h3>Squilibri ormonali</h3>
-                <p>Piani alimentari personalizzati per PCOS, endometriosi, amenorrea e altri squilibri ormonali femminili.</p>
+                <h3>Dimagrimento e ricomposizione corporea</h3>
+                <p>Percorsi nutrizionali per perdere massa grassa, migliorare la composizione corporea e raggiungere i propri obiettivi senza diete rigide o soluzioni temporanee, ma attraverso un'alimentazione equilibrata e sostenibile nel tempo.</p>
             </div>
             <div class="spec-card" data-aos="fade-up" data-aos-delay="200">
-                <div class="spec-icon"><i class='bx bx-plus-medical'></i></div>
-                <h3>Gravidanza e allattamento</h3>
-                <p>Supporto nutrizionale completo durante la gravidanza e l'allattamento per il benessere di mamma e bambino.</p>
+                <div class="spec-icon"><i class='bx bx-heart'></i></div>
+                <h3>Nutrizione e salute metabolica</h3>
+                <p>Supporto nutrizionale in presenza di insulino-resistenza, diabete, ipercolesterolemia, sindrome metabolica e altre condizioni che richiedono particolare attenzione all'alimentazione.</p>
             </div>
             <div class="spec-card" data-aos="fade-up" data-aos-delay="300">
+                <div class="spec-icon"><i class='bx bx-happy-heart-eyes'></i></div>
+                <h3>Salute intestinale</h3>
+                <p>Approccio nutrizionale personalizzato per gonfiore, stipsi, sindrome dell'intestino irritabile (IBS), reflusso, disbiosi e altre problematiche gastrointestinali, con attenzione alla tolleranza individuale e al benessere intestinale.</p>
+            </div>
+            <div class="spec-card" data-aos="fade-up" data-aos-delay="400">
+                <div class="spec-icon"><i class='bx bx-female'></i></div>
+                <h3>Salute ormonale femminile</h3>
+                <p>Alimentazione personalizzata a supporto della salute della donna in presenza di PCOS, endometriosi, alterazioni del ciclo mestruale e altre condizioni associate all'equilibrio ormonale.</p>
+            </div>
+            <div class="spec-card" data-aos="fade-up" data-aos-delay="500">
+                <div class="spec-icon"><i class='bx bx-child'></i></div>
+                <h3>Nutrizione pediatrica e adolescenziale</h3>
+                <p>Educazione alimentare e supporto nutrizionale durante l'infanzia e l'adolescenza, per accompagnare le diverse fasi della crescita e favorire un'alimentazione varia ed equilibrata e un rapporto sereno con il cibo.</p>
+            </div>
+            <div class="spec-card" data-aos="fade-up" data-aos-delay="600">
+                <div class="spec-icon"><i class='bx bx-plus-medical'></i></div>
+                <h3>Disturbi dell'alimentazione e della nutrizione (DAN)</h3>
+                <p>Supporto nutrizionale nell'ambito dei disturbi dell'alimentazione e della nutrizione, con un approccio centrato sulla persona e, quando necessario, all'interno di un percorso multidisciplinare.</p>
+            </div>
+            <div class="spec-card" data-aos="fade-up" data-aos-delay="700">
+                <div class="spec-icon"><i class='bx bx-heart'></i></div>
+                <h3>Gravidanza e allattamento</h3>
+                <p>Consulenza nutrizionale per accompagnare la gravidanza e l'allattamento, adattando l'alimentazione alle esigenze nutrizionali della mamma e del bambino nelle diverse fasi.</p>
+            </div>
+            <div class="spec-card" data-aos="fade-up" data-aos-delay="800">
                 <div class="spec-icon"><i class='bx bx-run'></i></div>
-                <h3>Nutrizione sportiva</h3>
-                <p>Piani nutrizionali per ottimizzare le performance atletiche, il recupero e la composizione corporea.</p>
+                <h3>Nutrizione per lo sport amatoriale</h3>
+                <p>Percorsi dedicati a chi pratica attività sportiva a livello amatoriale e desidera sostenere energia, recupero, performance e composizione corporea attraverso un'alimentazione adeguata al proprio sport e ai propri obiettivi.</p>
             </div>
         </div>
     </div>
@@ -327,7 +353,7 @@
 <!-- ============================================================
      5. RECENSIONI — carosello con fonte esplicita
      ============================================================ -->
-<section id="recensioni" class="section-content" style="background-color:#f9f9f9;">
+<section id="recensioni" class="section-content">
     <div class="container">
         <h2 data-aos="fade-up">Cosa dicono i pazienti</h2>
         <p style="text-align:center; max-width:600px; margin:0 auto 3rem; color:#666;" data-aos="fade-up" data-aos-delay="100">
@@ -342,12 +368,12 @@
                 <!-- RECENSIONI_STATICHE_INIZIO -->
             <article class="review-card">
                 <div class="review-quote">&quot;</div>
-                <p class="review-text">Ottimi pompini, complimenti</p>
+                <p class="review-text">Professionalità, gentilezza e disponibilità a servizio della clientela con particolare attenzione alle esigenze personali</p>
                 <div class="review-quote review-quote-close">&quot;</div>
                 <div class="review-author">
-                    <div class="author-avatar">D</div>
+                    <div class="author-avatar">A</div>
                     <div class="author-info">
-                        <h4>Davide Di Gennaro</h4>
+                        <h4>Antonella Arpino</h4>
                         <div class="stars" aria-label="5 stelle su 5">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
                         <div class="review-source review-source-google"><img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google"> Recensione da Google</div>
                     </div>
@@ -355,51 +381,78 @@
             </article>
             <article class="review-card">
                 <div class="review-quote">&quot;</div>
-                <p class="review-text">Funzionerà?</p>
+                <p class="review-text">Incontrare la Dott.ssa Martina Violo ha cambiato il mio approccio al benessere.<br />
+Mi sento supportata in ogni passo, vivendo le visite come un dialogo aperto e mai come un esame. Mi sta aiutando a eliminare i sensi di colpa, facendomi capire che la vera chiave è l&#039;ascolto dei propri bisogni e non la restrizione. Un&#039;esperienza che mi sta rigenerando non solo nel corpo, ma soprattutto nella mente.</p>
                 <div class="review-quote review-quote-close">&quot;</div>
                 <div class="review-author">
-                    <div class="author-avatar">R</div>
+                    <div class="author-avatar">M</div>
                     <div class="author-info">
-                        <h4>Rita Margarita</h4>
+                        <h4>Manuela Buonanno</h4>
                         <div class="stars" aria-label="5 stelle su 5">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-                        <div class="review-source">Recensione verificata</div>
+                        <div class="review-source review-source-google"><img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google"> Recensione da Google</div>
                     </div>
                 </div>
             </article>
             <article class="review-card">
                 <div class="review-quote">&quot;</div>
-                <p class="review-text">Bei pompini....</p>
+                <p class="review-text">Ho incominciato il percorso con la dottoressa Martina Violo a giugno del 2025,ad oggi grazie alla mia buona volontà di cambiare e al supporto della dottoressa ho perso 31 Kili solo con una dieta appropriata,senza dover ricorrere a medicinali e punturine, l&#039;obiettivo non è stato ancora raggiunto ma con l&#039;aiuto e la capacità della dottoressa, c&#039;è la posso fare</p>
                 <div class="review-quote review-quote-close">&quot;</div>
                 <div class="review-author">
                     <div class="author-avatar">A</div>
                     <div class="author-info">
-                        <h4>Antonio</h4>
+                        <h4>Anna Persechini</h4>
                         <div class="stars" aria-label="5 stelle su 5">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-                        <div class="review-source">Recensione verificata</div>
+                        <div class="review-source review-source-google"><img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google"> Recensione da Google</div>
                     </div>
                 </div>
             </article>
             <article class="review-card">
                 <div class="review-quote">&quot;</div>
-                <p class="review-text">Nutrizionista scadente, bei perizomi, soprattutto quello rosso che le ha regalato il fidanzato</p>
+                <p class="review-text">Uno dei rari casi in cui competenza e empatia sono presenti in egual misura e viaggiano di pari passo. Consiglio altamente la dott. Martina se si vuole intraprendere un percorso orientato non solo al dimagrimento, ma al raggiungimento di un benessere psicofisico e di educazione alimentare</p>
                 <div class="review-quote review-quote-close">&quot;</div>
                 <div class="review-author">
-                    <div class="author-avatar">A</div>
+                    <div class="author-avatar">F</div>
                     <div class="author-info">
-                        <h4>Antonio Barracane</h4>
-                        <div class="stars" aria-label="3 stelle su 5">&#9733;&#9733;&#9733;<span style="color:#ddd">&#9734;</span><span style="color:#ddd">&#9734;</span></div>
-                        <div class="review-source">Recensione verificata</div>
+                        <h4>Fabrizio D&#039;Agostino</h4>
+                        <div class="stars" aria-label="5 stelle su 5">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                        <div class="review-source review-source-google"><img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google"> Recensione da Google</div>
                     </div>
                 </div>
             </article>
             <article class="review-card">
                 <div class="review-quote">&quot;</div>
-                <p class="review-text">Come nutrizionista mhh.... Ma i pompini....... 5 stelle</p>
+                <p class="review-text">Molto soddisfatta Martina è una grande professionista,trova sempre la soluzione ad ogni esigenza direi fantastica</p>
                 <div class="review-quote review-quote-close">&quot;</div>
                 <div class="review-author">
                     <div class="author-avatar">D</div>
                     <div class="author-info">
-                        <h4>Davide Di Gennaro</h4>
+                        <h4>Daniela Morelli</h4>
+                        <div class="stars" aria-label="5 stelle su 5">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                        <div class="review-source review-source-google"><img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google"> Recensione da Google</div>
+                    </div>
+                </div>
+            </article>
+            <article class="review-card">
+                <div class="review-quote">&quot;</div>
+                <p class="review-text">Nutrizionista professionale e competente, attenta alle mie esigenze. Suggerimenti chiari, pratici e facili da seguire. Consigliatissima!</p>
+                <div class="review-quote review-quote-close">&quot;</div>
+                <div class="review-author">
+                    <div class="author-avatar">L</div>
+                    <div class="author-info">
+                        <h4>Luca Fortuna</h4>
+                        <div class="stars" aria-label="5 stelle su 5">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                        <div class="review-source review-source-google"><img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google"> Recensione da Google</div>
+                    </div>
+                </div>
+            </article>
+            <article class="review-card">
+                <div class="review-quote">&quot;</div>
+                <p class="review-text">Dottoressa preparatissima, cordiale, disponibile,non si limita a sottoscrivere uno schema alimentare,ma ascolta,valuta e soprattutto ti supporta per tutto il percorso...</p>
+                <div class="review-quote review-quote-close">&quot;</div>
+                <div class="review-author">
+                    <div class="author-avatar">M</div>
+                    <div class="author-info">
+                        <h4>Maria Ferrari</h4>
                         <div class="stars" aria-label="5 stelle su 5">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
                         <div class="review-source">Recensione verificata</div>
                     </div>
@@ -407,14 +460,84 @@
             </article>
             <article class="review-card">
                 <div class="review-quote">&quot;</div>
-                <p class="review-text">Top Nutrizionista, ottimi soffocotti</p>
+                <p class="review-text">Professionista molto seria, disponibile e competente.<br />
+Subito si ricevono soddisfacenti risultati.<br />
+Mi sento di consigliarla a tutti.</p>
+                <div class="review-quote review-quote-close">&quot;</div>
+                <div class="review-author">
+                    <div class="author-avatar">L</div>
+                    <div class="author-info">
+                        <h4>Lucia Meta</h4>
+                        <div class="stars" aria-label="5 stelle su 5">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                        <div class="review-source review-source-google"><img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google"> Recensione da Google</div>
+                    </div>
+                </div>
+            </article>
+            <article class="review-card">
+                <div class="review-quote">&quot;</div>
+                <p class="review-text">Mi sono approcciata con titubanza perché non ero abbastanza pronta per affrontare l’ennesimo percorso che poi non mi avrebbe portato a nulla di che.. invece ho trovato un altro modo totalmente nuovo che mi fa sentire a mio agio ho trovato dialogo .. risposte alle mie domande … con Martina abbiamo affrontato un percorso tutto nuovo che mi fa sentire a mio agio ma soprattutto mi fa stare bene e mi fa vivere le mie paure con serenità… per non parlare dei benefici a livello fisico che sto riscontrando …grazie sempre più motivata🥰</p>
+                <div class="review-quote review-quote-close">&quot;</div>
+                <div class="review-author">
+                    <div class="author-avatar">C</div>
+                    <div class="author-info">
+                        <h4>Cristina Velardo</h4>
+                        <div class="stars" aria-label="5 stelle su 5">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                        <div class="review-source review-source-google"><img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google"> Recensione da Google</div>
+                    </div>
+                </div>
+            </article>
+            <article class="review-card">
+                <div class="review-quote">&quot;</div>
+                <p class="review-text">Il piano alimentare è perfetto,è ben strutturato e facile da seguire perché è molto dettagliato e ha tanti suggerimenti. Mio figlio è contentissimo perché non deve rinunciare a nulla.Grazie anche alla professionalità della dottoressa Martina.</p>
+                <div class="review-quote review-quote-close">&quot;</div>
+                <div class="review-author">
+                    <div class="author-avatar">S</div>
+                    <div class="author-info">
+                        <h4>Sara Di Luzio</h4>
+                        <div class="stars" aria-label="5 stelle su 5">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                        <div class="review-source">Recensione verificata</div>
+                    </div>
+                </div>
+            </article>
+            <article class="review-card">
+                <div class="review-quote">&quot;</div>
+                <p class="review-text">Con sensibilità e competenza è riuscita a guidarmi senza mai farmi sentire giudicata, aiutandomi a costruire un rapporto più sereno ed equilibrato con ciò che mangio.<br />
+Ogni consiglio è stato personalizzato, concreto e fattibile, rendendo il cambiamento naturale.<br />
+Consiglio questo percorso a chiunque desideri ritrovare armonia con se stesso.<br />
+Grazie di ❤️</p>
+                <div class="review-quote review-quote-close">&quot;</div>
+                <div class="review-author">
+                    <div class="author-avatar">D</div>
+                    <div class="author-info">
+                        <h4>Donatella Russo</h4>
+                        <div class="stars" aria-label="5 stelle su 5">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                        <div class="review-source review-source-google"><img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google"> Recensione da Google</div>
+                    </div>
+                </div>
+            </article>
+            <article class="review-card">
+                <div class="review-quote">&quot;</div>
+                <p class="review-text">Professionista eccezionale. Mi ha aiutata a ritrovare il mio equilibrio alimentare dopo un periodo difficile. Il piano è personalizzato sulle mie esigenze e la sua disponibilità è costante. È una persona molto alla mano che sa mettere a proprio agio i pazienti. Grazie di cuore!</p>
                 <div class="review-quote review-quote-close">&quot;</div>
                 <div class="review-author">
                     <div class="author-avatar">A</div>
                     <div class="author-info">
-                        <h4>Antonio Fioresta</h4>
+                        <h4>Adriana Varlese</h4>
                         <div class="stars" aria-label="5 stelle su 5">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-                        <div class="review-source">Recensione verificata</div>
+                        <div class="review-source review-source-google"><img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google"> Recensione da Google</div>
+                    </div>
+                </div>
+            </article>
+            <article class="review-card">
+                <div class="review-quote">&quot;</div>
+                <p class="review-text">Professionista eccezionale! È una nutrizionista gentilissima, sempre disponibile ad ascoltare e a mettere a proprio agio. Molto preparata e competente, sa spiegare tutto in modo chiaro e personalizzato. Inoltre è davvero in gamba: riesce a motivarti e a seguirti con attenzione in ogni fase del percorso. La consiglio vivamente a chiunque voglia migliorare la propria alimentazione con il supporto di una vera professionista!</p>
+                <div class="review-quote review-quote-close">&quot;</div>
+                <div class="review-author">
+                    <div class="author-avatar">M</div>
+                    <div class="author-info">
+                        <h4>Mauro Mauriello</h4>
+                        <div class="stars" aria-label="5 stelle su 5">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                        <div class="review-source review-source-google"><img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google"> Recensione da Google</div>
                     </div>
                 </div>
             </article>
@@ -430,7 +553,7 @@
 <!-- ============================================================
      6. SERVIZI — card dettagliate con lista inclusa
      ============================================================ -->
-<section id="servizi" class="section-content">
+<section id="servizi" class="section-content" style="background-color:#f9f9f9;">
     <div class="container">
         <h2 data-aos="fade-up">Inizia il tuo percorso con me</h2>
         <p style="text-align:center; max-width:600px; margin:0 auto 3rem; color:#666;" data-aos="fade-up" data-aos-delay="100">
@@ -476,7 +599,7 @@
 <!-- ============================================================
      7. PRENOTA — wizard esistente invariato
      ============================================================ -->
-<section id="prenota" class="section-content" style="background-color:#f9f9f9;">
+<section id="prenota" class="section-content">
     <div class="container">
         <h2 data-aos="fade-up">Prenota un Appuntamento</h2>
 
@@ -487,7 +610,7 @@
                 <p>Visualizza il calendario e blocca subito il tuo posto.</p>
                 <span class="btn-fake">Prenota qui &rarr;</span>
             </button>
-            <a href="https://wa.me/393331909733?text=Salve,%20vorrei%20prenotare%20un%20appuntamento." target="_blank" class="choice-card whatsapp-card">
+            <a href="https://wa.me/393331909773?text=Salve,%20vorrei%20prenotare%20un%20appuntamento." target="_blank" class="choice-card whatsapp-card">
                 <div class="icon-circle wa"><i class='bx bxl-whatsapp'></i></div>
                 <h3>Via WhatsApp</h3>
                 <p>Scrivimi per concordare insieme orario e dettagli.</p>
@@ -501,12 +624,29 @@
             </button>
             <div class="wizard-container">
                 <ol class="wizard-progress" aria-label="Avanzamento prenotazione">
-                    <li class="active" data-step="1">Servizio</li>
-                    <li data-step="2">Giorno</li>
-                    <li data-step="3">Orario</li>
-                    <li data-step="4">Dati</li>
+                    <li class="active" data-step="1">Modalita</li>
+                    <li data-step="2">Servizio</li>
+                    <li data-step="3">Giorno</li>
+                    <li data-step="4">Orario</li>
+                    <li data-step="5">Dati</li>
                 </ol>
                 <div id="step-1" class="step-box active">
+                    <h2>Come preferisci la visita?</h2>
+                    <div class="scelta-servizio">
+                        <button type="button" onclick="scegliModalitaVisita('online')" class="btn-card">
+                            <div class="icon-box"><i class='bx bx-laptop'></i></div>
+                            <h3>Online</h3>
+                            <p>Videochiamata</p>
+                        </button>
+                        <button type="button" onclick="scegliModalitaVisita('studio')" class="btn-card">
+                            <div class="icon-box"><i class='bx bx-building-house'></i></div>
+                            <h3>In Studio</h3>
+                            <p>Presso lo studio</p>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="step-2" class="step-box">
                     <h2>Di cosa hai bisogno?</h2>
                     <div class="scelta-servizio">
                         <button type="button" onclick="scegliServizio('prima_visita', 60)" class="btn-card">
@@ -520,9 +660,10 @@
                             <p>30 Minuti</p>
                         </button>
                     </div>
+                    <button onclick="tornaAlStep(1)" class="btn-back">← Indietro</button>
                 </div>
 
-                <div id="step-2" class="step-box">
+                <div id="step-3" class="step-box">
                     <h2>Scegli il giorno</h2>
                     <div class="calendar-wrapper">
                         <div class="calendar-header">
@@ -535,10 +676,10 @@
                         </div>
                         <div id="calendar-days" class="calendar-grid"></div>
                     </div>
-                    <button onclick="tornaAlStep(1)" class="btn-back">← Indietro</button>
+                    <button onclick="tornaAlStep(2)" class="btn-back">← Indietro</button>
                 </div>
 
-                <div id="step-3" class="step-box">
+                <div id="step-4" class="step-box">
                     <h2>Orari Ottimizzati</h2>
                     <p style="font-size:0.9rem; color:#666; margin-bottom:15px;">Questi sono gli orari consigliati per te.</p>
                     <div id="booking-status" class="booking-status" role="alert" aria-live="polite" hidden></div>
@@ -547,25 +688,27 @@
                     <div class="divider" style="margin:20px 0; border-top:1px dashed #ccc;"></div>
                     <button onclick="mostraTuttiOrari()" class="btn-outline">Mostra tutti gli orari</button>
                     <br><br>
-                    <button onclick="tornaAlStep(2)" class="btn-back">← Cambia Giorno</button>
-                </div>
-
-                <div id="step-4" class="step-box">
-                    <h2>Tutti gli orari</h2>
-                    <div id="container-altri" class="orari-grid"></div>
-                    <br>
-                    <button onclick="tornaAlStep(3)" class="btn-back">← Indietro</button>
+                    <button onclick="tornaAlStep(3)" class="btn-back">← Cambia Giorno</button>
                 </div>
 
                 <div id="step-5" class="step-box">
+                    <h2>Tutti gli orari</h2>
+                    <div id="container-altri" class="orari-grid"></div>
+                    <br>
+                    <button onclick="tornaAlStep(4)" class="btn-back">← Indietro</button>
+                </div>
+
+                <div id="step-6" class="step-box">
                     <h2>Conferma Prenotazione</h2>
                     <div id="booking-error" class="booking-status is-error" role="alert" hidden></div>
                     <div class="riepilogo-box">
+                        <p><i class='bx bx-globe'></i> <strong id="riepilogo-modalita">...</strong></p>
                         <p><i class='bx bx-id-card'></i> <strong id="riepilogo-servizio">...</strong></p>
                         <p><i class='bx bx-calendar'></i> <strong id="riepilogo-data">...</strong></p>
                         <p><i class='bx bx-time'></i> <strong id="riepilogo-ora">...</strong></p>
                     </div>
                     <form action="prenota.php" method="POST" class="form-finale">
+                        <input type="hidden" name="modalita_visita" id="input-modalita-visita">
                         <input type="hidden" name="servizio" id="input-servizio">
                         <input type="hidden" name="data" id="input-data">
                         <input type="hidden" name="ora" id="input-ora">
@@ -581,7 +724,7 @@
                         </div>
                         <button type="submit" class="btn">Invia Richiesta</button>
                     </form>
-                    <button onclick="tornaAlStep(3)" class="btn-back">← Modifica Ora</button>
+                    <button onclick="tornaAlStep(4)" class="btn-back">← Modifica Ora</button>
                 </div>
             </div>
         </div>
@@ -591,9 +734,9 @@
 <!-- ============================================================
      8. CONTATTI — mappa + info (invariato)
      ============================================================ -->
-<section id="contatti" class="section-content" style="background-color:#fff;">
+<section id="contatti" class="section-content" style="background-color:#f9f9f9;">
     <div class="container">
-        <h2>Dove Siamo</h2>
+        <h2>Dove Sono</h2>
         <div class="contact-wrapper" data-aos="fade-in">
             <div class="contact-info">
                 <h3>Studio Dott.ssa Martina Violo</h3>
@@ -637,12 +780,12 @@
     </div>
 </footer>
 
-<a href="https://wa.me/393331909733" class="whatsapp-float" target="_blank">
+<a href="https://wa.me/393331909773" class="whatsapp-float" target="_blank">
     <i class='bx bxl-whatsapp'></i>
     <span class="whatsapp-msg">Scrivimi su WhatsApp</span>
 </a>
 <div class="mobile-sticky-bar">
-    <a href="https://wa.me/393331909733" class="btn-sticky-whatsapp"><i class='bx bxl-whatsapp'></i> WhatsApp</a>
+    <a href="https://wa.me/393331909773" class="btn-sticky-whatsapp"><i class='bx bxl-whatsapp'></i> WhatsApp</a>
     <a href="#prenota" class="btn-sticky-book">📅 Prenota Ora</a>
 </div>
 
@@ -670,6 +813,30 @@ document.addEventListener("DOMContentLoaded", function() {
             icon.classList.toggle('bx-x');
         });
     }
+
+    document.querySelectorAll('a[href^="#"]').forEach(link=>{
+        link.addEventListener('click', event=>{
+            const target=document.querySelector(link.getAttribute('href'));
+            if(!target) return;
+            event.preventDefault();
+            if(navMenu && navMenu.classList.contains('active')){
+                navMenu.classList.remove('active');
+                const icon=menuToggle ? menuToggle.querySelector('i') : null;
+                if(icon){
+                    icon.classList.add('bx-menu');
+                    icon.classList.remove('bx-x');
+                }
+            }
+            requestAnimationFrame(()=>{
+                const header=document.querySelector('header');
+                const offset=header ? header.getBoundingClientRect().height : 0;
+                const contentStart=target.querySelector('h2') || target;
+                const targetPosition=contentStart.getBoundingClientRect().top + window.scrollY - offset;
+                window.scrollTo({top:Math.max(0,targetPosition), behavior:'smooth'});
+                history.replaceState(null, '', link.getAttribute('href'));
+            });
+        });
+    });
 
     AOS.init({ duration:1000, once:true, offset:100 });
 
@@ -705,6 +872,54 @@ function scorriRecensioni(direzione){
     if(container) container.scrollBy({ left:370*direzione, behavior:'smooth' });
 }
 
+// Paginazione interna alle card recensioni (testi lunghi leggibili per intero, senza alterare l'altezza della card)
+function setupReviewPagination(){
+    document.querySelectorAll('#lista-recensioni .review-text').forEach(function(el){
+        const card = el.closest('.review-card');
+        if(!card) return;
+        const oldNav = card.querySelector('.review-text-nav');
+        if(oldNav) oldNav.remove();
+
+        el.style.columnWidth = el.clientWidth + 'px';
+        el.scrollLeft = 0;
+        const pageWidth = el.clientWidth;
+        const totalPages = pageWidth > 0 ? Math.max(1, Math.round(el.scrollWidth / pageWidth)) : 1;
+
+        const nav = document.createElement('div');
+        nav.className = 'review-text-nav' + (totalPages <= 1 ? ' is-hidden' : '');
+        nav.innerHTML = '<button type="button" class="review-page-btn prev" aria-label="Pagina precedente"><i class="bx bx-chevron-left"></i></button>' +
+            '<span class="review-page-indicator">1 / ' + totalPages + '</span>' +
+            '<button type="button" class="review-page-btn next" aria-label="Pagina successiva"><i class="bx bx-chevron-right"></i></button>';
+        el.insertAdjacentElement('afterend', nav);
+
+        if(totalPages <= 1) return;
+
+        let currentPage = 0;
+        const indicator = nav.querySelector('.review-page-indicator');
+        const prevBtn = nav.querySelector('.prev');
+        const nextBtn = nav.querySelector('.next');
+
+        function updateNav(){
+            prevBtn.disabled = currentPage === 0;
+            nextBtn.disabled = currentPage === totalPages - 1;
+            indicator.textContent = (currentPage + 1) + ' / ' + totalPages;
+        }
+        prevBtn.addEventListener('click', function(){
+            if(currentPage > 0){ currentPage--; el.scrollTo({ left: currentPage * pageWidth, behavior:'smooth' }); updateNav(); }
+        });
+        nextBtn.addEventListener('click', function(){
+            if(currentPage < totalPages - 1){ currentPage++; el.scrollTo({ left: currentPage * pageWidth, behavior:'smooth' }); updateNav(); }
+        });
+        updateNav();
+    });
+}
+window.addEventListener('load', setupReviewPagination);
+let reviewPaginationResizeTimeout;
+window.addEventListener('resize', function(){
+    clearTimeout(reviewPaginationResizeTimeout);
+    reviewPaginationResizeTimeout = setTimeout(setupReviewPagination, 250);
+});
+
 // Statistiche
 const orarioIngresso=Date.now();
 window.utenteHaPrenotato=0;
@@ -733,7 +948,7 @@ if (errorText && bookingError) {
 }
 
 // Wizard prenotazioni
-let datiPrenotazione={ servizio:'', durata:0, data:'', dataVisual:'', ora:'' };
+let datiPrenotazione={ modalita_visita:'', servizio:'', durata:0, data:'', dataVisual:'', ora:'' };
 let dataCorrenteCal=new Date();
 
 function mostraStep(stepId){
@@ -741,7 +956,10 @@ function mostraStep(stepId){
     const step=document.getElementById(stepId);
     if(step){
         step.classList.add('active');
-        const progressStep = step.id === 'step-5' ? 4 : Number(step.id.replace('step-', ''));
+        let progressStep = Number(step.id.replace('step-', ''));
+        if (step.id === 'step-6') progressStep = 5;
+        if (step.id === 'step-5') progressStep = 4;
+
         document.querySelectorAll('.wizard-progress li').forEach(item=>{
             const itemStep = Number(item.dataset.step);
             item.classList.toggle('active', itemStep === progressStep);
@@ -749,12 +967,22 @@ function mostraStep(stepId){
         });
         step.scrollIntoView({behavior:'smooth',block:'start'});
     }
-    if(stepId==='step-2') renderCalendario();
+    if(stepId==='step-3') renderCalendario();
 }
 function tornaAlStep(n){ mostraStep('step-'+n); }
 function tornaIndietroScelta(){ document.getElementById('online-form-container').style.display='none'; document.getElementById('booking-choice').style.display='flex'; }
-function mostraFormOnline(){ document.getElementById('booking-choice').style.display='none'; document.getElementById('online-form-container').style.display='block'; }
-function scegliServizio(tipo,minuti){ datiPrenotazione.servizio=tipo; datiPrenotazione.durata=minuti; document.getElementById('input-servizio').value=tipo; mostraStep('step-2'); }
+function mostraFormOnline(){ document.getElementById('booking-choice').style.display='none'; document.getElementById('online-form-container').style.display='block'; mostraStep('step-1'); }
+function scegliModalitaVisita(tipo){
+    datiPrenotazione.modalita_visita=tipo;
+    document.getElementById('input-modalita-visita').value=tipo;
+    mostraStep('step-2');
+}
+function scegliServizio(tipo,minuti){
+    datiPrenotazione.servizio=tipo;
+    datiPrenotazione.durata=minuti;
+    document.getElementById('input-servizio').value=tipo;
+    mostraStep('step-3');
+}
 
 function renderCalendario(){
     const grid=document.getElementById('calendar-days');
@@ -796,7 +1024,7 @@ function selezionaDataCal(giorno,mese,anno){
     datiPrenotazione.dataVisual=`${dd}-${mm}-${anno}`;
     document.getElementById('input-data').value=datiPrenotazione.data;
     caricaOrariReali();
-    setTimeout(()=>mostraStep('step-3'),200);
+    setTimeout(()=>mostraStep('step-4'),200);
 }
 
 function caricaOrariReali(){
@@ -835,18 +1063,20 @@ function creaBottoneOrario(ora,container,isConsigliato){
     container.appendChild(btn);
 }
 
-function mostraTuttiOrari(){ mostraStep('step-4'); }
+function mostraTuttiOrari(){ mostraStep('step-5'); }
 
 function confermaOra(ora){
     datiPrenotazione.ora=ora;
     document.getElementById('input-ora').value=ora;
+    const riepModalita=document.getElementById('riepilogo-modalita');
     const riepServizio=document.getElementById('riepilogo-servizio');
     const riepData=document.getElementById('riepilogo-data');
     const riepOra=document.getElementById('riepilogo-ora');
+    if(riepModalita) riepModalita.innerText=datiPrenotazione.modalita_visita === 'online' ? 'VISITA ONLINE' : 'VISITA IN STUDIO';
     if(riepServizio) riepServizio.innerText=datiPrenotazione.servizio.replace('_',' ').toUpperCase();
     if(riepData) riepData.innerText=datiPrenotazione.dataVisual;
     if(riepOra) riepOra.innerText=datiPrenotazione.ora;
-    mostraStep('step-5');
+    mostraStep('step-6');
 }
 </script>
 </body>

@@ -71,7 +71,7 @@ if ($azione === 'conferma_email') {
         $mail->isHTML(true);
         $mail->Subject = "✅ Appuntamento Confermato - Dott.ssa Violo";
         $mail->Body = "
-        <div style='font-family:sans-serif; padding:20px; background:#FBF3E4;'>
+        <div style="font-family:'Montserrat', sans-serif; padding:20px; background:#FBF3E4;">
             <div style='background:white; padding:30px; border-radius:10px; max-width:600px; margin:0 auto; border-top:4px solid #668073;'>
                 <h1 style='color:#668073;'>Confermato!</h1>
                 <p>Ciao $nome_safe,</p>
@@ -111,7 +111,7 @@ $conn->close();
     <link rel="icon" type="image/png" href="img/logo.svg">
     <meta charset="UTF-8">
     <title>Esito</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 </head>
 <body style="font-family:'Montserrat',sans-serif; background:#f0f2f5; display:flex; justify-content:center; align-items:center; height:100vh; margin:0;">
     <div style="background:white; padding:40px; border-radius:15px; text-align:center; box-shadow:0 10px 25px rgba(0,0,0,0.1); border-top:5px solid #668073; max-width:400px; width:90%;">

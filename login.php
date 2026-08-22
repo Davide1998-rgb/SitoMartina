@@ -19,9 +19,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } elseif (!verify_csrf_token()) {
         $error = "Sessione scaduta. Ricarica la pagina e riprova.";
     } else {
+        $username_inserito = trim($_POST['username'] ?? '');
         $password_inserita = $_POST['password'] ?? '';
 
-        $stmt = $conn->prepare("SELECT password FROM admin_users LIMIT 1");
+        $stmt = $conn->prepare("SELECT password FROM admin_users WHERE username = ? LIMIT 1");
+        $stmt->bind_param("s", $username_inserito);
         $stmt->execute();
         $result = $stmt->get_result();
 
@@ -42,10 +44,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 record_failed_login();
                 usleep(400000); // Ritardo anti-brute-force
                 $rateCheckAfter = check_login_rate_limit();
-                $error = $rateCheckAfter['allowed'] ? "Password errata." : $rateCheckAfter['message'];
+                $error = $rateCheckAfter['allowed'] ? "Credenziali errate." : $rateCheckAfter['message'];
             }
         } else {
-            $error = "Nessuna password impostata nel sistema.";
+            record_failed_login();
+            usleep(400000); // Ritardo anti-brute-force
+            $rateCheckAfter = check_login_rate_limit();
+            $error = $rateCheckAfter['allowed'] ? "Credenziali errate." : $rateCheckAfter['message'];
         }
         $stmt->close();
     }
@@ -97,7 +102,7 @@ $conn->close();
 <body>
     <div class="login-box">
         <h2 style="color:#668073;">Bentornata</h2>
-        <p style="font-size:0.9rem; color:#666;">Inserisci la password per accedere.</p>
+        <p style="font-size:0.9rem; color:#666;">Inserisci username e password per accedere.</p>
         
         <?php if($error): ?>
             <p style='color:red; font-weight:bold; background:#ffe6e6; padding:10px; border-radius:5px;'><?php echo htmlspecialchars($error, ENT_QUOTES, 'UTF-8'); ?></p>
@@ -105,7 +110,8 @@ $conn->close();
         
         <form method="POST">
             <?php echo csrf_field(); ?>
-            <input type="password" name="password" placeholder="••••••••" required autofocus>
+            <input type="text" name="username" placeholder="Username" required autofocus autocomplete="username">
+            <input type="password" name="password" placeholder="••••••••" required autocomplete="current-password">
             <button type="submit" class="btn" style="width:100%;">Accedi</button>
         </form>
         
